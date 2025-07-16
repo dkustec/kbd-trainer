@@ -8,13 +8,15 @@ project(KBDTrainer VERSION 1.0)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-set(SDL3_DIR "C:\\SDL\\SDL3")
-set(SDL3_IMAGE_DIR "C:\\SDL\\SDL3_image")
-set(SDL3_TTF_DIR "C:\\SDL\\SDL3_ttf")
+set(SDL3_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL")
+set(SDL3_IMAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL_IMAGE")
+set(SDL3_TTF_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL_ttf")
 
-find_package(SDL3 REQUIRED HINTS ${SDL3_DIR})
-find_package(SDL3_IMAGE REQUIRED HINTS ${SDL3_IMAGE_DIR})
-find_package(SDL3_TTF REQUIRED HINTS ${SDL3_TTF_DIR})
+add_subdirectory(SDL EXCLUDE_FROM_ALL)
+set(SDLTTF_VENDORED ON) # tell SDL_ttf to build its own dependencies
+add_subdirectory(SDL_ttf EXCLUDE_FROM_ALL)
+set(SDLIMAGE_VENDORED ON)
+add_subdirectory(SDL_image EXCLUDE_FROM_ALL)
 
 set(HEADER_FILES
     include/input.h
