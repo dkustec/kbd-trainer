@@ -13,6 +13,8 @@ set(SDL3_IMAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL_IMAGE")
 set(SDL3_TTF_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL_ttf")
 
 add_subdirectory(SDL EXCLUDE_FROM_ALL)
+
+set(SDLTTF_HARFBUZZ OFF)
 set(SDLTTF_VENDORED ON) # tell SDL_ttf to build its own dependencies
 add_subdirectory(SDL_ttf EXCLUDE_FROM_ALL)
 set(SDLIMAGE_VENDORED ON)
