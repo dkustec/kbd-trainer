@@ -39,3 +39,9 @@ jobs:
       with:
         name: artifacts
         path: build # Specify the correct path to upload
+
+    - name: Upload Binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: binaries
+        path: bin # Specify the correct path to upload
