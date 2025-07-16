@@ -1,6 +1,16 @@
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.10)
 
+
+# set the output directory for built objects.
+# This makes sure that the dynamic library goes into the build directory automatically.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+
+# prevent installing to system directories. 
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
+
+
 # Project name
 project(KBDTrainer VERSION 1.0)
 
@@ -8,16 +18,18 @@ project(KBDTrainer VERSION 1.0)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-set(SDL3_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL")
-set(SDL3_IMAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL_IMAGE")
-set(SDL3_TTF_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDL_ttf")
 
 add_subdirectory(SDL EXCLUDE_FROM_ALL)
 
-set(SDLTTF_HARFBUZZ OFF)
 set(SDLTTF_VENDORED ON) # tell SDL_ttf to build its own dependencies
 add_subdirectory(SDL_ttf EXCLUDE_FROM_ALL)
+
+
 set(SDLIMAGE_VENDORED ON)
+set(SDLIMAGE_AVIF OFF)	# disable formats we don't use to make the build faster and smaller.
+set(SDLIMAGE_BMP OFF)
+set(SDLIMAGE_JPEG OFF)
+set(SDLIMAGE_WEBP OFF)
 add_subdirectory(SDL_image EXCLUDE_FROM_ALL)
 
 set(HEADER_FILES
@@ -45,7 +57,13 @@ endif()
 
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
-target_link_libraries(${PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf) 
+
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC 
+	SDL3_ttf::SDL3_ttf      # remove if you are not using SDL_ttf
+	SDL3_image::SDL3_image	# remove if you are not using SDL_image
+    SDL3::SDL3              # If using satelite libraries, SDL must be the last item in the list. 
+)
+target_compile_definitions(${PROJECT_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
 
 # Build the exe in the base project folder
 set_target_properties(${PROJECT_NAME} PROPERTIES
