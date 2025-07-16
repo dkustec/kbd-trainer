@@ -74,9 +74,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Get DLL locations
-get_target_property(SDL3_DLL_PATH SDL3::SDL3 LOCATION)
-get_target_property(SDL3_IMAGE_DLL_PATH SDL3_image::SDL3_image LOCATION)
-get_target_property(SDL3_TTF_DLL_PATH SDL3_ttf::SDL3_ttf LOCATION)
+get_target_property(SDL3_DLL_PATH SDL3::SDL3 $<TARGET_FILE>)
+get_target_property(SDL3_IMAGE_DLL_PATH SDL3_image::SDL3_image $<TARGET_FILE>)
+get_target_property(SDL3_TTF_DLL_PATH SDL3_ttf::SDL3_ttf $<TARGET_FILE>)
 
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
