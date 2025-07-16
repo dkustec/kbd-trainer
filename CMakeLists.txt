@@ -22,6 +22,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 add_subdirectory(SDL EXCLUDE_FROM_ALL)
 
 set(SDLTTF_VENDORED ON) # tell SDL_ttf to build its own dependencies
+set(SDLTTF_PLUTOSVG OFF)
 add_subdirectory(SDL_ttf EXCLUDE_FROM_ALL)
 
 
