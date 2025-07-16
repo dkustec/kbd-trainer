@@ -74,23 +74,23 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Get DLL locations
-get_target_property(SDL3_DLL_PATH SDL3::SDL3 $<TARGET_FILE>)
-get_target_property(SDL3_IMAGE_DLL_PATH SDL3_image::SDL3_image $<TARGET_FILE>)
-get_target_property(SDL3_TTF_DLL_PATH SDL3_ttf::SDL3_ttf $<TARGET_FILE>)
+## get_target_property(SDL3_DLL_PATH SDL3::SDL3 $<TARGET_FILE>)
+## get_target_property(SDL3_IMAGE_DLL_PATH SDL3_image::SDL3_image $<TARGET_FILE>)
+## get_target_property(SDL3_TTF_DLL_PATH SDL3_ttf::SDL3_ttf $<TARGET_FILE>)
 
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SDL3_DLL_PATH}"
-        "${CMAKE_SOURCE_DIR}/bin"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SDL3_IMAGE_DLL_PATH}"
-        "${CMAKE_SOURCE_DIR}/bin"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SDL3_TTF_DLL_PATH}"
-        "${CMAKE_SOURCE_DIR}/bin"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        "${CMAKE_SOURCE_DIR}/bin/assets"
-    COMMENT "Copying SDL3 and SDL3_image DLLs to output directory"
-)
+## add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "${SDL3_DLL_PATH}"
+#        "${CMAKE_SOURCE_DIR}/bin"
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "${SDL3_IMAGE_DLL_PATH}"
+#        "${CMAKE_SOURCE_DIR}/bin"
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "${SDL3_TTF_DLL_PATH}"
+#        "${CMAKE_SOURCE_DIR}/bin"
+#    COMMAND ${CMAKE_COMMAND} -E copy_directory
+#        "${CMAKE_SOURCE_DIR}/assets"
+#        "${CMAKE_SOURCE_DIR}/bin/assets"
+#    COMMENT "Copying SDL3 and SDL3_image DLLs to output directory"
+# )
