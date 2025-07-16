@@ -58,10 +58,10 @@ endif()
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC 
+target_link_libraries(${PROJECT_NAME} PUBLIC 
 	SDL3_ttf::SDL3_ttf      # remove if you are not using SDL_ttf
 	SDL3_image::SDL3_image	# remove if you are not using SDL_image
-    SDL3::SDL3              # If using satelite libraries, SDL must be the last item in the list. 
+    	SDL3::SDL3              # If using satelite libraries, SDL must be the last item in the list. 
 )
 target_compile_definitions(${PROJECT_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
 
