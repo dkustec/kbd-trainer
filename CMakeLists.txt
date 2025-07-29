@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
-# prevent installing to system directories. 
+# prevent installing to system directories.
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
 
@@ -28,9 +28,10 @@ add_subdirectory(SDL_ttf EXCLUDE_FROM_ALL)
 
 set(SDLIMAGE_VENDORED ON)
 set(SDLIMAGE_AVIF OFF)	# disable formats we don't use to make the build faster and smaller.
-set(SDLIMAGE_BMP OFF)
+set(SDLIMAGE_BMP ON)	# enable BMP - needed for game assets
 set(SDLIMAGE_JPEG OFF)
 set(SDLIMAGE_WEBP OFF)
+set(SDLIMAGE_TIF OFF)	# disable TIFF to avoid ZLIB issues
 add_subdirectory(SDL_image EXCLUDE_FROM_ALL)
 
 set(HEADER_FILES
@@ -59,10 +60,10 @@ endif()
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC 
+target_link_libraries(${PROJECT_NAME} PUBLIC
 	SDL3_ttf::SDL3_ttf      # remove if you are not using SDL_ttf
 	SDL3_image::SDL3_image	# remove if you are not using SDL_image
-    	SDL3::SDL3              # If using satelite libraries, SDL must be the last item in the list. 
+    	SDL3::SDL3              # If using satelite libraries, SDL must be the last item in the list.
 )
 target_compile_definitions(${PROJECT_NAME} PUBLIC SDL_MAIN_USE_CALLBACKS)
 
