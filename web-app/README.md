@@ -1,6 +1,6 @@
 # KBD Trainer Web App
 
-A modern, tournament-style web application for practicing fighting game keyboard inputs. Built with React and featuring a sleek dark theme with gold/cyan accents.
+A modern, tournament-style web application for practicing fighting game keyboard inputs. Built with React and sporting a gamer oriented purple/violet palette.
 
 ## 🎮 Features
 
@@ -56,12 +56,11 @@ npm run preview
 ## 🎨 Design System
 
 ### Colors
-- **Background**: Deep black (#0a0a0a) - Tournament venue atmosphere
-- **Gold**: (#ffd700) - Success, scores, achievements
-- **Cyan**: (#00ffff) - Active inputs, special highlights
-- **Red**: (#ff073a) - Failures, errors, damage
-- **Orange**: (#ff6b35) - Combo counters
-- **Purple**: (#8a2be2) - Perfect inputs
+- **Background**: Deep violet (#0c001a) - Arcade vibe
+- **Violet**: (#b517ff) - Primary highlights
+- **Purple**: (#7209b7) - Secondary accents
+- **Pink**: (#f72585) - Combo counters
+- **Red**: (#ff073a) - Failures and damage
 
 ### Typography
 - **Primary**: JetBrains Mono (monospace for precision)
