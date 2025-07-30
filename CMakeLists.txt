@@ -28,7 +28,7 @@ add_subdirectory(SDL_ttf EXCLUDE_FROM_ALL)
 
 set(SDLIMAGE_VENDORED ON)
 set(SDLIMAGE_AVIF OFF)	# disable formats we don't use to make the build faster and smaller.
-set(SDLIMAGE_BMP OFF)
+set(SDLIMAGE_BMP ON)	# enable BMP support for game assets
 set(SDLIMAGE_JPEG OFF)
 set(SDLIMAGE_WEBP OFF)
 add_subdirectory(SDL_image EXCLUDE_FROM_ALL)
@@ -74,23 +74,22 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Get DLL locations
-## get_target_property(SDL3_DLL_PATH SDL3::SDL3 $<TARGET_FILE>)
-## get_target_property(SDL3_IMAGE_DLL_PATH SDL3_image::SDL3_image $<TARGET_FILE>)
-## get_target_property(SDL3_TTF_DLL_PATH SDL3_ttf::SDL3_ttf $<TARGET_FILE>)
+get_target_property(SDL3_DLL_PATH SDL3::SDL3 IMPORTED_LOCATION_DEBUG)
+get_target_property(SDL3_IMAGE_DLL_PATH SDL3_image::SDL3_image IMPORTED_LOCATION_DEBUG)
+get_target_property(SDL3_TTF_DLL_PATH SDL3_ttf::SDL3_ttf IMPORTED_LOCATION_DEBUG)
 
-
-## add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#        "${SDL3_DLL_PATH}"
-#        "${CMAKE_SOURCE_DIR}/bin"
-#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#        "${SDL3_IMAGE_DLL_PATH}"
-#        "${CMAKE_SOURCE_DIR}/bin"
-#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#        "${SDL3_TTF_DLL_PATH}"
-#        "${CMAKE_SOURCE_DIR}/bin"
-#    COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        "${CMAKE_SOURCE_DIR}/assets"
-#        "${CMAKE_SOURCE_DIR}/bin/assets"
-#    COMMENT "Copying SDL3 and SDL3_image DLLs to output directory"
-# )
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:SDL3::SDL3>"
+        "${CMAKE_SOURCE_DIR}/bin"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:SDL3_image::SDL3_image>"
+        "${CMAKE_SOURCE_DIR}/bin"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:SDL3_ttf::SDL3_ttf>"
+        "${CMAKE_SOURCE_DIR}/bin"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets"
+        "${CMAKE_SOURCE_DIR}/bin/assets"
+    COMMENT "Copying SDL3 and SDL3_image DLLs to output directory"
+)

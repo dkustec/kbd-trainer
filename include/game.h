@@ -33,6 +33,10 @@ typedef struct{
     InputAccuracy last_input_acc;
     GameDirection last_input;
     
+    // Timing for miss pause
+    uint64_t miss_time;
+    bool in_miss_pause;
+    
     GameMode *current_mode;
     bool run_game;
 } GameState;

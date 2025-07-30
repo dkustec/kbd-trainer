@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL3/SDL.h>
 
 #include "game.h"
 #include "input.h"
@@ -15,7 +16,9 @@ void InitGame()
     _initGameModes();
     
     GameState initGS = {0};
-    initGS.current_mode = gamemodes; 
+    initGS.current_mode = gamemodes;
+    initGS.miss_time = 0;
+    initGS.in_miss_pause = false;
 
     gamestate = initGS;
 }
@@ -65,13 +68,30 @@ void _updateMenu(ControllerState *cs)
 void _updateGame(ControllerState *cs)
 {
     gamestate.curr_input = cs->direction;
+    
+    // Handle miss pause - wait 2 seconds before resetting
+    if (gamestate.in_miss_pause)
+    {
+        uint64_t current_time = SDL_GetTicksNS();
+        uint64_t pause_duration = 2000000000ULL; // 2 seconds in nanoseconds
+        
+        if (current_time - gamestate.miss_time >= pause_duration)
+        {
+            // Reset after pause
+            gamestate.player_pos = 0;
+            gamestate.score = 0;
+            gamestate.last_input_acc = NONE;
+            gamestate.in_miss_pause = false;
+            prev_input = *cs;
+        }
+        return;
+    }
+    
     if (gamestate.last_input_acc == FAIL)
     {
-        // Reset after failure
-        gamestate.player_pos = 0;
-        gamestate.score = 0;
-        gamestate.last_input_acc = NONE;
-        prev_input = *cs;
+        // Start miss pause timer
+        gamestate.miss_time = SDL_GetTicksNS();
+        gamestate.in_miss_pause = true;
         return;
     }
 
@@ -117,13 +137,15 @@ void _updateGame(ControllerState *cs)
 
 void _startGame()
 {
-    printf("Mode(%d) score: %d\n", selected_mode, highscores[selected_mode]);
+    printf("Mode(%d) score: %llu\n", selected_mode, (unsigned long long)highscores[selected_mode]);
     gamestate.player_pos = 0;
     gamestate.score = 0;
     gamestate.highscore = highscores[selected_mode];
 
     gamestate.last_input = NEUTRAL;
     gamestate.last_input_acc = NONE;
+    gamestate.miss_time = 0;
+    gamestate.in_miss_pause = false;
     gamestate.run_game = true;
 }
 
@@ -140,7 +162,7 @@ void _initGameModes()
     GameDirection *pattern;
 
     // P1 KBD
-    pattern = malloc(4 * sizeof(GameMode));
+    pattern = malloc(4 * sizeof(GameDirection));
     pattern[0] = BACK;
     pattern[1] = NEUTRAL;
     pattern[2] = BACK;
@@ -151,7 +173,7 @@ void _initGameModes()
     gamemodes[0].pattern = pattern;
     
     // P2 KBD
-    pattern = malloc(4 * sizeof(GameMode));
+    pattern = malloc(4 * sizeof(GameDirection));
     pattern[0] = FORWARD;
     pattern[1] = NEUTRAL;
     pattern[2] = FORWARD;
@@ -162,7 +184,7 @@ void _initGameModes()
     gamemodes[1].pattern = pattern;
 
     // P1 WD
-    pattern = malloc(6 * sizeof(GameMode));
+    pattern = malloc(6 * sizeof(GameDirection));
     pattern[0] = FORWARD;
     pattern[1] = NEUTRAL;
     pattern[2] = DOWN;
@@ -176,7 +198,7 @@ void _initGameModes()
 
 
     // P2 WD
-    pattern = malloc(6 * sizeof(GameMode));
+    pattern = malloc(6 * sizeof(GameDirection));
     pattern[0] = BACK;
     pattern[1] = NEUTRAL;
     pattern[2] = DOWN;
