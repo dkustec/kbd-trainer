@@ -1,6 +1,23 @@
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.10)
 
+# Allow version to be passed from CI/CD or default to 1.0.0
+if(NOT DEFINED PROJECT_VERSION)
+    set(PROJECT_VERSION "1.0.0")
+endif()
+
+# Parse version components for CPack
+string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)" VERSION_MATCH ${PROJECT_VERSION})
+if(VERSION_MATCH)
+    set(PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
+    set(PROJECT_VERSION_MINOR ${CMAKE_MATCH_2})
+    set(PROJECT_VERSION_PATCH ${CMAKE_MATCH_3})
+else()
+    # Fallback if version parsing fails
+    set(PROJECT_VERSION_MAJOR 1)
+    set(PROJECT_VERSION_MINOR 0)
+    set(PROJECT_VERSION_PATCH 0)
+endif()
 
 # set the output directory for built objects.
 # This makes sure that the dynamic library goes into the build directory automatically.
@@ -11,8 +28,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 
 
-# Project name
-project(KBDTrainer VERSION 1.0)
+# Project name with version
+project(KBDTrainer VERSION ${PROJECT_VERSION})
 
 # C standard
 set(CMAKE_C_STANDARD 11)
