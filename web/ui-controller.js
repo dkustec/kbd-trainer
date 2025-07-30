@@ -206,22 +206,20 @@ class UIController {
                 statusEl.style.flexDirection = 'row'; // Ensure proper layout
                 break;
             case 'playing':
-                const expected = this.gameEngine.getExpectedInput();
-                // Create container for "Next:" text and direction image
-                statusEl.innerHTML = ''; // Clear previous content
-                const nextText = document.createElement('span');
-                nextText.textContent = 'Next: ';
-                nextText.style.marginRight = '8px';
-                
-                const directionImg = this.createDirectionImage(expected);
-                directionImg.style.width = '36px';  // Larger than Last Input (44px vs 32px)
-                directionImg.style.height = '36px';
-                directionImg.style.verticalAlign = 'middle';
-                
-                statusEl.appendChild(nextText);
-                statusEl.appendChild(directionImg);
+                statusEl.textContent = 'Training Active';
                 statusEl.className = 'game-status status-playing';
-                statusEl.style.flexDirection = 'row'; // Ensure horizontal layout
+                statusEl.style.flexDirection = 'row';
+                
+                // Update the separate Next input display
+                const nextDisplayEl = document.getElementById('next-input-display');
+                if (nextDisplayEl) {
+                    const expected = this.gameEngine.getExpectedInput();
+                    nextDisplayEl.innerHTML = '';
+                    const directionImg = this.createDirectionImage(expected);
+                    directionImg.style.width = '36px';
+                    directionImg.style.height = '36px';
+                    nextDisplayEl.appendChild(directionImg);
+                }
                 break;
                 break;
             case 'miss_pause':

@@ -64,60 +64,77 @@
 
         <!-- Main Game Area -->
         <main class="game-area">
-            <!-- Current Mode Display -->
-            <div class="mode-display">
-                <h2 id="current-mode">P1 KBD</h2>
-            </div>
+            <!-- Two Column Layout -->
+            <div class="game-layout">
+                <!-- Left Column: Main Game Content -->
+                <div class="left-column">
+                    <!-- Current Mode Display -->
+                    <div class="mode-display">
+                        <h2 id="current-mode">P1 KBD</h2>
+                    </div>
 
-            <!-- Pattern Display - MAIN FOCUS -->
-            <div class="pattern-container">
-                <div class="pattern-label">Pattern:</div>
-                <div id="pattern-display" class="pattern-display">
-                    <!-- Pattern steps will be dynamically added here -->
-                </div>
-            </div>
+                    <!-- Pattern Display - MAIN FOCUS -->
+                    <div class="pattern-container">
+                        <div class="pattern-label">Pattern:</div>
+                        <div id="pattern-display" class="pattern-display">
+                            <!-- Pattern steps will be dynamically added here -->
+                        </div>
+                    </div>
 
-            <!-- Status Display - PROMINENT -->
-            <div class="status-container">
-                <div id="game-status" class="game-status status-menu">Select mode and press Start</div>
-                <div class="last-input-container">
-                    <span class="last-input-label">Last Input:</span>
-                    <span id="last-input" class="last-input">●</span>
-                </div>
-            </div>
+                    <!-- Status Display - PROMINENT -->
+                    <div class="status-container">
+                        <div id="game-status" class="game-status status-menu">Select mode and press Start</div>
+                    </div>
 
-            <!-- Score Display - LARGE -->
-            <div class="score-container">
-                <div class="score-item">
-                    <span class="score-label">Score</span>
-                    <span id="score" class="score-value">0</span>
-                </div>
-                <div class="score-item">
-                    <span class="score-label">High Score</span>
-                    <span id="highscore" class="score-value">0</span>
-                </div>
-            </div>
+                    <!-- Game Info Row: Next and Last Input -->
+                    <div class="game-info-row">
+                        <div class="next-input-container">
+                            <span class="input-label">Next:</span>
+                            <div id="next-input-display" class="input-display"></div>
+                        </div>
+                        <div class="last-input-container">
+                            <span class="input-label">Last Input:</span>
+                            <span id="last-input" class="last-input">●</span>
+                        </div>
+                    </div>
 
-            <!-- Enhanced Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="accuracy-value">100</div>
-                    <div class="stat-label">Accuracy %</div>
-                    <div class="accuracy-bar">
-                        <div class="accuracy-fill" id="accuracy-fill" style="width: 100%"></div>
+                    <!-- Stats Row - Horizontal -->
+                    <div class="stats-row">
+                        <div class="stat-card-compact">
+                            <div class="stat-value" id="accuracy-value">100</div>
+                            <div class="stat-label">Accuracy %</div>
+                            <div class="accuracy-bar">
+                                <div class="accuracy-fill" id="accuracy-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-card-compact">
+                            <div class="stat-value" id="total-inputs">0</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                        <div class="stat-card-compact">
+                            <div class="stat-value" id="perfect-inputs">0</div>
+                            <div class="stat-label">Perfect</div>
+                        </div>
+                        <div class="stat-card-compact">
+                            <div class="stat-value" id="missed-inputs">0</div>
+                            <div class="stat-label">Missed</div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="total-inputs">0</div>
-                    <div class="stat-label">Total Inputs</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="perfect-inputs">0</div>
-                    <div class="stat-label">Perfect</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="missed-inputs">0</div>
-                    <div class="stat-label">Missed</div>
+
+                <!-- Right Column: Score Display -->
+                <div class="right-column">
+                    <!-- Score Display - Vertical Stack -->
+                    <div class="score-container-vertical">
+                        <div class="score-item">
+                            <span class="score-label">High Score</span>
+                            <span id="highscore" class="score-value">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Score</span>
+                            <span id="score" class="score-value">0</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
