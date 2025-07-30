@@ -6,6 +6,7 @@
 class UIController {
     constructor(gameEngine) {
         this.gameEngine = gameEngine;
+        this.hasStartedGame = false; // Track if game has been started at least once
         this.init();
     }
     
@@ -67,6 +68,7 @@ class UIController {
             this.gameEngine.stopGame();
         } else {
             this.gameEngine.startGame();
+            this.hasStartedGame = true; // Mark that game has been started
         }
         this.updateUI();
     }
@@ -88,16 +90,13 @@ class UIController {
     }
     
     updateModeButtons() {
-        const buttons = [
-            document.getElementById('mode-p1-kbd'),
-            document.getElementById('mode-p2-kbd'),
-            document.getElementById('mode-p1-wd'),
-            document.getElementById('mode-p2-wd')
-        ];
-        
-        buttons.forEach((btn, index) => {
-            if (btn) {
-                btn.classList.toggle('active', index === this.gameEngine.selectedMode);
+        // Update mode cards selection (not buttons anymore)
+        const modeCards = document.querySelectorAll('.mode-card');
+        modeCards.forEach((card, index) => {
+            if (index === this.gameEngine.selectedMode) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
             }
         });
     }
@@ -132,15 +131,26 @@ class UIController {
         const currentMode = this.gameEngine.getCurrentMode();
         const pattern = currentMode.pattern;
         
-        patternEl.innerHTML = '';
+        // Only rebuild if pattern changed or first time
+        if (patternEl.children.length !== pattern.length) {
+            patternEl.innerHTML = '';
+            
+            pattern.forEach((direction, index) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = 'direction-icon';
+                stepEl.innerHTML = `<span class="icon-symbol">${this.directionToSymbol(direction)}</span>`;
+                stepEl.dataset.index = index; // Store index for reference
+                patternEl.appendChild(stepEl);
+            });
+        }
         
-        pattern.forEach((direction, index) => {
-            const stepEl = document.createElement('div');
+        // Update states of existing icons without rebuilding
+        Array.from(patternEl.children).forEach((stepEl, index) => {
+            // Clear all state classes first
             stepEl.className = 'direction-icon';
-            stepEl.innerHTML = `<span class="icon-symbol">${this.directionToSymbol(direction)}</span>`;
             
             // Determine state based on game progress
-            if (this.gameEngine.runGame) {
+            if (this.gameEngine.runGame && this.hasStartedGame) {
                 if (index === this.gameEngine.playerPos) {
                     stepEl.classList.add('active');
                 } else if (index < this.gameEngine.playerPos) {
@@ -148,19 +158,24 @@ class UIController {
                 } else {
                     stepEl.classList.add('neutral');
                 }
-                
-                // Add failure animation if last input was wrong at this position
-                if (this.gameEngine.lastInputAcc === 'fail' && index === this.gameEngine.playerPos) {
-                    stepEl.classList.add('failed');
-                    // Remove animation class after animation completes
-                    setTimeout(() => stepEl.classList.remove('failed'), 400);
-                }
             } else {
                 stepEl.classList.add('neutral');
             }
-            
-            patternEl.appendChild(stepEl);
         });
+        
+        // Handle failure animation separately and only if game has actually started
+        if (this.gameEngine.lastInputAcc === 'fail' && 
+            this.gameEngine.runGame && 
+            this.hasStartedGame &&
+            this.gameEngine.totalInputs > 0) {
+            const currentIcon = patternEl.children[this.gameEngine.playerPos];
+            if (currentIcon && !currentIcon.classList.contains('failed')) {
+                currentIcon.classList.add('failed');
+                setTimeout(() => {
+                    if (currentIcon) currentIcon.classList.remove('failed');
+                }, 400);
+            }
+        }
     }
     
     updateStatusDisplay() {
