@@ -3,15 +3,16 @@
 
 :root {
   /* Tournament Color Palette */
-  --bg-arena: #0a0a0a;
-  --bg-secondary: #1a1a1a;
-  --bg-elevated: #222222;
+  /* Gamer Purple Theme */
+  --bg-arena: #0c001a;
+  --bg-secondary: #1d0731;
+  --bg-elevated: #29164c;
 
-  --gold-trophy: #ffd700;
+  --gold-trophy: #b517ff; /* primary violet */
   --blood-red: #ff073a;
-  --neon-cyan: #00ffff;
-  --combo-orange: #ff6b35;
-  --perfect-purple: #8a2be2;
+  --neon-cyan: #7209b7;  /* secondary violet */
+  --combo-orange: #f72585; /* magenta accent */
+  --perfect-purple: #9d4edd;
   --warning-yellow: #ffff00;
 
   --text-primary: #ffffff;
@@ -39,9 +40,9 @@
   --radius-lg: 12px;
 
   /* Shadows */
-  --shadow-glow: 0 0 20px rgba(255, 215, 0, 0.3);
+  --shadow-glow: 0 0 20px rgba(181, 23, 255, 0.3);
   --shadow-red-glow: 0 0 20px rgba(255, 7, 58, 0.4);
-  --shadow-cyan-glow: 0 0 20px rgba(0, 255, 255, 0.4);
+  --shadow-cyan-glow: 0 0 20px rgba(114, 9, 183, 0.4);
 }
 
 /* Reset and Base Styles */
@@ -208,7 +209,7 @@ body {
   }
 
   50% {
-    box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 40px rgba(114, 9, 183, 0.8);
     transform: scale(1.1);
   }
 }
@@ -285,7 +286,7 @@ body {
   font-weight: 800;
   color: var(--gold-trophy);
   font-family: var(--font-mono);
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  text-shadow: 0 0 10px rgba(181, 23, 255, 0.5);
   line-height: 1;
 }
 
@@ -332,11 +333,11 @@ body {
 .mode-card:hover {
   border-color: var(--gold-trophy);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(181, 23, 255, 0.2);
 }
 
 .mode-card.active {
-  background: linear-gradient(135deg, var(--gold-trophy), #e6c200);
+  background: linear-gradient(135deg, var(--gold-trophy), #9d4edd);
   border-color: var(--gold-trophy);
   color: var(--text-dark);
   box-shadow: var(--shadow-glow);
@@ -545,7 +546,7 @@ body {
   border-color: var(--gold-trophy);
   color: var(--gold-trophy);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(181, 23, 255, 0.2);
 }
 
 .tournament-button:active {
@@ -559,8 +560,8 @@ body {
 }
 
 .tournament-button.primary:hover {
-  background: #e6c200;
-  border-color: #e6c200;
+  background: #9d4edd;
+  border-color: #9d4edd;
 }
 
 /* Pattern Preview Styles */
