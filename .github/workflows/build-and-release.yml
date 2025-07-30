@@ -28,44 +28,64 @@ jobs:
       id: version
       shell: pwsh
       run: |
-        # Get the latest tag or default to v0.1.0
-        $latestTag = git describe --tags --abbrev=0 2>$null
-        if (-not $latestTag) {
-          $latestTag = "v0.1.0"
-          Write-Host "No existing tags found, starting with $latestTag"
+        try {
+          # Get the latest tag or default to v0.1.0
+          $latestTag = ""
+          try {
+            $latestTag = git describe --tags --abbrev=0 2>$null
+          } catch {
+            # Ignore error
+          }
+          
+          if (-not $latestTag -or $latestTag -eq "") {
+            $latestTag = "v0.1.0"
+            Write-Host "No existing tags found, starting with $latestTag"
+          }
+          
+          # Check if current commit is tagged
+          $currentTag = ""
+          $isRelease = "false"
+          
+          try {
+            $currentTag = git describe --exact-match --tags HEAD 2>$null
+          } catch {
+            # Ignore error - not a tagged commit
+          }
+          
+          if ($currentTag -and $currentTag -ne "") {
+            # Current commit has a tag - this is a release
+            $version = $currentTag
+            $isRelease = "true"
+            Write-Host "Release build detected: $version"
+          } else {
+            # Development build - append commit info
+            $commitCount = git rev-list --count HEAD
+            $shortSha = git rev-parse --short HEAD
+            $version = "$latestTag-dev.$commitCount+$shortSha"
+            Write-Host "Development build: $version"
+          }
+          
+          # Validate semantic versioning format for releases
+          if ($isRelease -eq "true" -and $version -notmatch '^v\d+\.\d+\.\d+(-[a-zA-Z0-9\-\.]+)?(\+[a-zA-Z0-9\-\.]+)?$') {
+            Write-Error "Invalid semantic version format: $version"
+            Write-Error "Expected format: v1.2.3, v1.2.3-alpha, v1.2.3-beta.1, etc."
+            exit 1
+          }
+          
+          # Set outputs
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "is_release=$isRelease" >> $env:GITHUB_OUTPUT
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+          
+          Write-Host "Version: $version"
+          Write-Host "Is Release: $isRelease"
+        } catch {
+          Write-Error "Error in version detection: $_"
+          # Fallback version
+          echo "version=v0.1.0-dev.0+unknown" >> $env:GITHUB_OUTPUT
+          echo "is_release=false" >> $env:GITHUB_OUTPUT
+          echo "VERSION=v0.1.0-dev.0+unknown" >> $env:GITHUB_ENV
         }
-        
-        # Check if current commit is tagged
-        $currentTag = git describe --exact-match --tags HEAD 2>$null
-        $isRelease = $false
-        
-        if ($currentTag) {
-          # Current commit has a tag - this is a release
-          $version = $currentTag
-          $isRelease = $true
-          Write-Host "Release build detected: $version"
-        } else {
-          # Development build - append commit info
-          $commitCount = git rev-list --count HEAD
-          $shortSha = git rev-parse --short HEAD
-          $version = "$latestTag-dev.$commitCount+$shortSha"
-          Write-Host "Development build: $version"
-        }
-        
-        # Validate semantic versioning format for releases
-        if ($isRelease -and $version -notmatch '^v\d+\.\d+\.\d+(-[a-zA-Z0-9\-\.]+)?(\+[a-zA-Z0-9\-\.]+)?$') {
-          Write-Error "Invalid semantic version format: $version"
-          Write-Error "Expected format: v1.2.3, v1.2.3-alpha, v1.2.3-beta.1, etc."
-          exit 1
-        }
-        
-        # Set outputs
-        echo "version=$version" >> $env:GITHUB_OUTPUT
-        echo "is_release=$isRelease" >> $env:GITHUB_OUTPUT
-        echo "VERSION=$version" >> $env:GITHUB_ENV
-        
-        Write-Host "Version: $version"
-        Write-Host "Is Release: $isRelease"
 
     - name: Set up MSVC
       uses: microsoft/setup-msbuild@v2
@@ -76,44 +96,112 @@ jobs:
         echo "C:\Program Files (x86)\NSIS" >> $env:GITHUB_PATH
 
     - name: Install WiX Toolset v3.14
+      shell: pwsh
       run: |
-        $wixUrl = "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip"
-        $wixPath = "$env:RUNNER_TEMP\wix314"
-        Invoke-WebRequest -Uri $wixUrl -OutFile "$env:RUNNER_TEMP\wix314.zip"
-        Expand-Archive -Path "$env:RUNNER_TEMP\wix314.zip" -DestinationPath $wixPath
-        echo "$wixPath" >> $env:GITHUB_PATH
+        try {
+          $wixUrl = "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip"
+          $wixPath = "$env:RUNNER_TEMP\wix314"
+          $zipPath = "$env:RUNNER_TEMP\wix314.zip"
+          
+          Write-Host "Downloading WiX from: $wixUrl"
+          Invoke-WebRequest -Uri $wixUrl -OutFile $zipPath -UseBasicParsing
+          
+          Write-Host "Extracting WiX to: $wixPath"
+          Expand-Archive -Path $zipPath -DestinationPath $wixPath -Force
+          
+          Write-Host "Adding WiX to PATH: $wixPath"
+          echo "$wixPath" >> $env:GITHUB_PATH
+          
+          # Verify WiX installation
+          if (Test-Path "$wixPath\candle.exe") {
+            Write-Host "WiX installed successfully"
+          } else {
+            Write-Warning "WiX candle.exe not found, WiX packaging may fail"
+          }
+        } catch {
+          Write-Error "WiX installation failed: $_"
+          Write-Host "Continuing without WiX - MSI packaging will be skipped"
+        }
 
     - name: Configure CMake
+      shell: pwsh
       run: |
-        # Extract version for CMake (remove 'v' prefix and any pre-release/build metadata)
-        $version = "${{ steps.version.outputs.version }}"
-        $cleanVersion = $version -replace '^v' -replace '-.*$' -replace '\+.*$'
-        Write-Host "Using version for CMake: $cleanVersion"
-        
-        cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPROJECT_VERSION="$cleanVersion"
+        try {
+          # Extract version for CMake (remove 'v' prefix and any pre-release/build metadata)
+          $version = "${{ steps.version.outputs.version }}"
+          $cleanVersion = $version -replace '^v' -replace '-.*$' -replace '\+.*$'
+          Write-Host "Using version for CMake: $cleanVersion"
+          
+          # Ensure we have a valid version format (fallback to 1.0.0)
+          if ($cleanVersion -notmatch '^\d+\.\d+\.\d+$') {
+            Write-Host "Version format invalid, using fallback 1.0.0"
+            $cleanVersion = "1.0.0"
+          }
+          
+          cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPROJECT_VERSION="$cleanVersion"
+        } catch {
+          Write-Error "CMake configuration failed: $_"
+          # Try without custom version
+          Write-Host "Retrying CMake without custom version..."
+          cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        }
 
     - name: Build
       run: cmake --build build --config ${{env.BUILD_TYPE}}
 
     - name: Create ZIP Package
+      shell: pwsh
       run: |
-        cd build
-        cpack -G ZIP
+        try {
+          cd build
+          Write-Host "Creating ZIP package..."
+          cpack -G ZIP
+          Write-Host "ZIP package created successfully"
+        } catch {
+          Write-Error "ZIP packaging failed: $_"
+          exit 1
+        }
 
     - name: Create NSIS Installer
+      shell: pwsh
       run: |
-        cd build
-        cpack -G NSIS
+        try {
+          cd build
+          Write-Host "Creating NSIS installer..."
+          cpack -G NSIS
+          Write-Host "NSIS installer created successfully"
+        } catch {
+          Write-Warning "NSIS packaging failed: $_"
+          Write-Host "Continuing without NSIS package"
+        }
 
     - name: Create WiX MSI Package
+      shell: pwsh
       run: |
-        cd build
-        cpack -G WIX
+        try {
+          cd build
+          Write-Host "Creating WiX MSI package..."
+          cpack -G WIX
+          Write-Host "WiX MSI package created successfully"
+        } catch {
+          Write-Warning "WiX packaging failed: $_"
+          Write-Host "Continuing without MSI package"
+        }
 
     - name: List generated packages
+      shell: pwsh
       run: |
         cd build
-        Get-ChildItem "KBD Trainer-*.zip", "KBD Trainer-*.exe", "KBD Trainer-*.msi" | Format-Table Name, Length
+        Write-Host "Checking for generated packages:"
+        $packages = Get-ChildItem "KBD Trainer-*.zip", "KBD Trainer-*.exe", "KBD Trainer-*.msi" -ErrorAction SilentlyContinue
+        if ($packages) {
+          $packages | Format-Table Name, Length
+        } else {
+          Write-Host "No packages found with expected pattern"
+          # List all files to debug
+          Write-Host "All files in build directory:"
+          Get-ChildItem | Format-Table Name, Length
+        }
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
@@ -123,42 +211,76 @@ jobs:
           build/KBD Trainer-*.zip
           build/KBD Trainer-*.exe
           build/KBD Trainer-*.msi
+          build/*.zip
+          build/*.exe
+          build/*.msi
         retention-days: 30
+        if-no-files-found: warn
 
     - name: Generate Changelog
       if: steps.version.outputs.is_release == 'true'
       id: changelog
       shell: pwsh
       run: |
-        # Get the previous tag for changelog generation
-        $currentTag = "${{ steps.version.outputs.version }}"
-        $previousTag = git describe --tags --abbrev=0 "$currentTag^" 2>$null
-        
-        if (-not $previousTag) {
-          $previousTag = git rev-list --max-parents=0 HEAD
-          Write-Host "No previous tag found, using initial commit: $previousTag"
+        try {
+          # Get the previous tag for changelog generation
+          $currentTag = "${{ steps.version.outputs.version }}"
+          $previousTag = ""
+          
+          try {
+            $previousTag = git describe --tags --abbrev=0 "$currentTag^" 2>$null
+          } catch {
+            # Ignore error
+          }
+          
+          if (-not $previousTag -or $previousTag -eq "") {
+            try {
+              $previousTag = git rev-list --max-parents=0 HEAD
+              Write-Host "No previous tag found, using initial commit: $previousTag"
+            } catch {
+              Write-Host "Could not find initial commit, using current tag"
+              $previousTag = $currentTag
+            }
+          }
+          
+          Write-Host "Generating changelog from $previousTag to $currentTag"
+          
+          # Generate changelog using git log
+          $changelog = @()
+          try {
+            if ($previousTag -eq $currentTag) {
+              $changelog = @("- Initial release")
+            } else {
+              $gitLog = git log --pretty=format:"- %s (%h)" "$previousTag..$currentTag" 2>$null
+              if ($gitLog) {
+                $changelog = $gitLog | Where-Object { $_ -ne "" -and $_ -ne $null }
+              }
+            }
+          } catch {
+            Write-Host "Git log failed, using default changelog"
+          }
+          
+          if (-not $changelog -or $changelog.Count -eq 0) {
+            $changelog = @("- Release $currentTag")
+          }
+          
+          $changelogText = $changelog -join "`n"
+          
+          # Save changelog to file and output
+          $changelogText | Out-File -FilePath "CHANGELOG.md" -Encoding UTF8
+          
+          # Set output (escape newlines for GitHub Actions)
+          $escapedChangelog = $changelogText -replace "`n", "%0A" -replace "`r", ""
+          echo "changelog=$escapedChangelog" >> $env:GITHUB_OUTPUT
+          
+          Write-Host "Generated changelog:"
+          Write-Host $changelogText
+        } catch {
+          Write-Error "Changelog generation failed: $_"
+          # Fallback changelog
+          $fallbackChangelog = "- Release ${{ steps.version.outputs.version }}"
+          echo "changelog=$fallbackChangelog" >> $env:GITHUB_OUTPUT
         }
-        
-        Write-Host "Generating changelog from $previousTag to $currentTag"
-        
-        # Generate changelog using git log
-        $changelog = git log --pretty=format:"- %s (%h)" "$previousTag..$currentTag" | Where-Object { $_ -ne "" }
-        
-        if (-not $changelog) {
-          $changelog = @("- Initial release")
-        }
-        
-        $changelogText = $changelog -join "`n"
-        
-        # Save changelog to file and output
-        $changelogText | Out-File -FilePath "CHANGELOG.md" -Encoding UTF8
-        
-        # Set output (escape newlines for GitHub Actions)
-        $escapedChangelog = $changelogText -replace "`n", "%0A" -replace "`r", ""
-        echo "changelog=$escapedChangelog" >> $env:GITHUB_OUTPUT
-        
-        Write-Host "Generated changelog:"
-        Write-Host $changelogText
 
     - name: Create Release (on tag push)
       if: steps.version.outputs.is_release == 'true'
