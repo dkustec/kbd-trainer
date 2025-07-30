@@ -3,6 +3,7 @@
 #define GAME_MODE_COUNT 4
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "input.h"
 
 typedef struct {

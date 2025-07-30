@@ -1,0 +1,6 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-4.0/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in
+C:/Program Files/CMake/share/cmake-4.0/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/WriteBasicConfigVersionFile.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/minhook/CMakeLists.txt
+D:/Development/.GITHUB_MY/kbd-trainer/minhook/cmake/minhook-config.cmake.in

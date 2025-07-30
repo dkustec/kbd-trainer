@@ -1,0 +1,17 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeDependentOption.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeParseArguments.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CMakePushCheckState.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckCCompilerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckSymbolExists.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/GNUInstallDirs.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/WriteBasicConfigVersionFile.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_ttf/CMakeLists.txt
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_ttf/cmake/GetGitRevisionDescription.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_ttf/cmake/PkgConfigHelper.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_ttf/cmake/PrivateSdlFunctions.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_ttf/cmake/sdlcpu.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_ttf/cmake/sdlmanpages.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_ttf/cmake/sdlplatform.cmake

@@ -158,6 +158,8 @@ void Render(SDL_Renderer *renderer)
 
 void _renderMenu(SDL_Renderer *renderer)
 {
+    // Clear with transparent background for overlay effect
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
     
     SDL_FRect destRect = {SIDE_PADDING, INITIAL_VIEW_HEIGHT / 2 - ICON_HEIGHT / 2, INITIAL_VIEW_WIDTH - (SIDE_PADDING * 2), ICON_HEIGHT};
@@ -212,6 +214,8 @@ SDL_FRect failed_acc_rect = {
 
 void _renderGame(SDL_Renderer *renderer) 
 {
+    // Clear with transparent background for overlay effect
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
     
     // Render inputs

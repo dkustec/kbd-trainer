@@ -1,0 +1,10 @@
+^D:\DEVELOPMENT\.GITHUB_MY\KBD-TRAINER\SDL_IMAGE\EXTERNAL\LIBTIFF\LIBTIFF\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Development/.GITHUB_MY/kbd-trainer -BD:/Development/.GITHUB_MY/kbd-trainer/build-overlay --check-stamp-file D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_image/external/libtiff-build/libtiff/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

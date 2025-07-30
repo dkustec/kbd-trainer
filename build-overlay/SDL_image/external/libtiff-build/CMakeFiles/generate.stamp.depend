@@ -1,0 +1,48 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckCCompilerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckIncludeFileCXX.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckLibraryExists.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckSymbolExists.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/CheckTypeSize.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/FindZLIB.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/GNUInstallDirs.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/SelectLibraryConfigurations.cmake
+C:/Program Files/CMake/share/cmake-4.0/Modules/TestBigEndian.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/cmake/FindWebP.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/CMakeLists.txt
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/AutotoolsCompat.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/AutotoolsVersion.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/CXXLibrary.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/CompilerChecks.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/DeflateCodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/FindCMath.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/FindDeflate.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/FindJBIG.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/FindJPEG.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/FindLERC.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/FindZSTD.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/Findliblzma.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/IncludeChecks.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/InternalCodecs.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/JBIGCodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/JPEGCodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/LERCCodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/LZMACodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/LargeFileSupport.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/LibraryFeatures.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/LinkerChecks.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/PixarLogCodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/PkgConfig.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/ProcessorChecks.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/Release.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/SymbolChecks.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/TypeSizeChecks.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/WebPCodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/WindowsSupport.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/cmake/ZSTDCodec.cmake
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/configure.ac
+D:/Development/.GITHUB_MY/kbd-trainer/SDL_image/external/libtiff/libtiff-4.pc.in

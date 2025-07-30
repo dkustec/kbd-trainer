@@ -42,13 +42,16 @@ int main()
     else
         printf("No compatible controller detected. Using keyboard inputs (WASD)\n");
     
-    SDL_CreateWindowAndRenderer("KBD Trainer", INITIAL_VIEW_WIDTH, INITIAL_VIEW_HEIGHT, 0, &window, &renderer);
+    SDL_CreateWindowAndRenderer("KBD Trainer", INITIAL_VIEW_WIDTH, INITIAL_VIEW_HEIGHT, SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS, &window, &renderer);
     if (window == NULL)
     {
         printf("Error creating window: %s\n", SDL_GetError());
         SDL_Delay(2000);
         return 1;
     }
+    
+    // Set window opacity for overlay effect (0.0 = fully transparent, 1.0 = fully opaque)
+    SDL_SetWindowOpacity(window, 0.9f);
     
     InitGame();
     

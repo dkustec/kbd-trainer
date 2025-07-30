@@ -35,6 +35,9 @@ project(KBDTrainer VERSION ${PROJECT_VERSION})
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# Build options
+option(BUILD_OVERLAY "Build overlay version for injection" OFF)
+option(BUILD_STANDALONE "Build standalone training app" ON)
 
 add_subdirectory(SDL EXCLUDE_FROM_ALL)
 
@@ -197,5 +200,65 @@ set(CPACK_NSIS_DELETE_ICONS_EXTRA
 # Set executable icon (if we had one)
 # set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/assets/icon.ico")
 # set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/assets/icon.ico")
+
+# Overlay build targets
+if(BUILD_OVERLAY)
+    # Add ImGui
+    set(IMGUI_SOURCES
+        imgui/imgui.cpp
+        imgui/imgui_demo.cpp
+        imgui/imgui_draw.cpp
+        imgui/imgui_tables.cpp
+        imgui/imgui_widgets.cpp
+        imgui/backends/imgui_impl_dx11.cpp
+        imgui/backends/imgui_impl_win32.cpp
+    )
+    
+    # Add MinHook
+    add_subdirectory(minhook EXCLUDE_FROM_ALL)
+    
+    # Overlay DLL - minimal version without SDL dependencies
+    add_library(KBDTrainerOverlay SHARED
+        src/overlay.cpp
+        src/dx11_hook.cpp
+        ${IMGUI_SOURCES}
+    )
+    
+    target_include_directories(KBDTrainerOverlay PRIVATE 
+        include
+        imgui
+        imgui/backends
+        minhook/include
+    )
+    
+    target_link_libraries(KBDTrainerOverlay 
+        d3d11
+        dxgi
+        user32
+        kernel32
+        minhook
+    )
+    
+    # Set DLL properties
+    set_target_properties(KBDTrainerOverlay PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin"
+    )
+    
+    # Injector executable - simplified, no game dependencies
+    add_executable(KBDTrainerInjector
+        src/injector.c
+    )
+    
+    target_link_libraries(KBDTrainerInjector user32 kernel32)
+    
+    # Set injector properties
+    set_target_properties(KBDTrainerInjector PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin"
+    )
+endif()
 
 include(CPack)

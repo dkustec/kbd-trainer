@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Development\.GITHUB_MY\kbd-trainer\build-overlay\CMakeFiles\db20c26d2443ba117bf4728afd800987\PACKAGE_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{968CFAB2-3F04-3871-B246-76938DC712AB}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -17,6 +17,7 @@
 - **🎛️ Controller Support** (Xbox/PlayStation compatible)
 - **⌨️ Keyboard Fallback** (WASD controls)
 - **📊 Miss Analysis** with 2-second pause for reflection
+- **🎯 Overlay Mode** - Inject into Tekken for in-game training
 
 ## 🚀 Quick Start
 
@@ -25,6 +26,7 @@
 - **CMake** 3.10 or higher
 - **Git** (for submodules)
 - **Visual Studio 2019+** or compatible C compiler
+- **Administrator privileges** (for overlay injection)
 
 ### Installation
 
@@ -36,28 +38,51 @@ cd kbd-trainer
 # Initialize SDL dependencies
 git submodule update --init --recursive
 
-# Build the project
+# Build standalone version
 mkdir build
 cd build
 cmake ..
+cmake --build .
+
+# Build overlay version (optional)
+cmake -DBUILD_OVERLAY=ON ..
 cmake --build .
 ```
 
 ### Running
 
+#### Standalone Mode
 ```bash
 # From project root
 ./bin/KBDTrainer.exe
 ```
 
+#### Overlay Mode
+```bash
+# 1. Start Tekken 7/8 or other supported fighting game
+# 2. Run as Administrator:
+./bin/KBDTrainerInjector.exe
+
+# 3. In-game, press F1 to toggle overlay
+```
+
 ## 🎮 Controls
 
+### Standalone Mode
 | Action | Controller | Keyboard |
 |--------|------------|----------|
 | Navigate Menu | D-Pad Left/Right | A/D |
 | Confirm | A Button | Enter |
 | Back/Exit | B/Start | Escape |
 | Training Input | D-Pad | WASD |
+
+### Overlay Mode
+| Action | Key |
+|--------|-----|
+| Toggle Overlay | F1 |
+| Hide Overlay | Click "Hide" button |
+
+**Overlay automatically detects game inputs - no manual input required!**
 
 ## 🎯 Training Modes
 
@@ -142,6 +167,35 @@ cmake --build .
 - [ ] **Replay System** - Record and review sessions
 - [ ] **Online Leaderboards** - Community competition
 - [ ] **Mobile Support** - Cross-platform training
+- [x] **Overlay Mode** - In-game training assistance via DLL injection
+
+## 🎯 Overlay Features
+
+The overlay system transforms KBD Trainer into an injectable training assistant:
+
+### 🔧 **Technical Implementation**
+- **DLL Injection** - Injects into running fighting games
+- **DirectX 11 Hooking** - Intercepts graphics calls using MinHook
+- **ImGui Interface** - Modern, responsive overlay UI
+- **Real-time Monitoring** - Automatic input pattern detection
+- **Non-intrusive** - Doesn't interfere with game performance
+
+### 🎮 **Supported Games**
+- Tekken 8 (`TekkenGame-Win64-Shipping.exe`)
+- Tekken 7 (`Tekken7-Win64-Shipping.exe`) 
+- Street Fighter 6 (`SF6.exe`)
+- Street Fighter V (`StreetFighterV.exe`)
+
+### 🚀 **Quick Setup**
+```bash
+# Build overlay version
+./build-overlay.bat
+
+# Usage
+1. Start your fighting game
+2. Run bin/KBDTrainerInjector.exe as Administrator  
+3. Press F1 in-game to toggle overlay
+```
 
 ## 📦 Packaging & Distribution
 

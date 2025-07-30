@@ -1,0 +1,17 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_ttf/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_ttf/external/harfbuzz-build/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_ttf/external/freetype-build/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_image/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_image/external/libtiff-build/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_image/external/libtiff-build/port/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_image/external/libtiff-build/libtiff/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/SDL_image/external/libtiff-build/build/cmake_install.cmake",
+		"D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/minhook/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

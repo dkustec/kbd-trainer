@@ -1,0 +1,10 @@
+^D:\DEVELOPMENT\.GITHUB_MY\KBD-TRAINER\BUILD-OVERLAY\CMAKEFILES\3A9EC29F3C80FDB6FCFCD80BDE1E95E9\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Development/.GITHUB_MY/kbd-trainer -BD:/Development/.GITHUB_MY/kbd-trainer/build-overlay --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Development/.GITHUB_MY/kbd-trainer/build-overlay/KBDTrainer.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
