@@ -93,3 +93,92 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         "${CMAKE_SOURCE_DIR}/bin/assets"
     COMMENT "Copying SDL3 and SDL3_image DLLs to output directory"
 )
+
+# ==============================================================================
+# PACKAGING CONFIGURATION
+# ==============================================================================
+
+# Install the executable
+install(TARGETS ${PROJECT_NAME}
+    DESTINATION .
+    COMPONENT Runtime
+)
+
+# Install DLLs
+install(FILES
+    "$<TARGET_FILE:SDL3::SDL3>"
+    "$<TARGET_FILE:SDL3_image::SDL3_image>"
+    "$<TARGET_FILE:SDL3_ttf::SDL3_ttf>"
+    DESTINATION .
+    COMPONENT Runtime
+)
+
+# Install assets
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/assets/"
+    DESTINATION assets
+    COMPONENT Runtime
+)
+
+# Install documentation
+install(FILES
+    "${CMAKE_SOURCE_DIR}/README.md"
+    "${CMAKE_SOURCE_DIR}/INSTALL.md"
+    "${CMAKE_SOURCE_DIR}/setup.bat"
+    DESTINATION .
+    COMPONENT Runtime
+    OPTIONAL
+)
+
+# License file
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+
+# WiX-specific settings
+if(WIN32)
+    set(CPACK_WIX_LICENSE_RTF "${CMAKE_SOURCE_DIR}/LICENSE.rtf")
+    set(CPACK_WIX_UPGRADE_GUID "A1B2C3D4-E5F6-7890-ABCD-123456789012")
+    set(CPACK_WIX_PRODUCT_GUID "*")  # Generate new GUID for each version
+    # Fix for WiX empty directory component duplication
+    set(CPACK_WIX_SKIP_PROGRAM_FOLDER TRUE)
+    set(CPACK_COMPONENT_GROUP_RUNTIME_REQUIRED TRUE)
+    set(CPACK_COMPONENTS_ALL Runtime)
+endif()
+
+# CPack configuration
+if(WIN32)
+    # Default to ZIP, but allow NSIS if available
+    set(CPACK_GENERATOR "ZIP;NSIS")
+else()
+    set(CPACK_GENERATOR "TGZ")
+endif()
+set(CPACK_PACKAGE_NAME "KBD Trainer")
+set(CPACK_PACKAGE_VENDOR "dkustec")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Korean Backdash Training Tool for Tekken")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH 0)
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "KBD Trainer")
+
+# NSIS specific settings
+set(CPACK_NSIS_PACKAGE_NAME "KBD Trainer")
+set(CPACK_NSIS_DISPLAY_NAME "KBD Trainer - Tekken Input Training")
+set(CPACK_NSIS_HELP_LINK "https://github.com/dkustec/kbd-trainer")
+set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/dkustec/kbd-trainer")
+set(CPACK_NSIS_CONTACT "github.com/dkustec")
+set(CPACK_NSIS_MODIFY_PATH OFF)
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+
+# Create desktop shortcut
+set(CPACK_NSIS_CREATE_ICONS_EXTRA
+    "CreateShortCut '$DESKTOP\\\\KBD Trainer.lnk' '$INSTDIR\\\\KBDTrainer.exe'"
+)
+
+# Remove desktop shortcut on uninstall
+set(CPACK_NSIS_DELETE_ICONS_EXTRA
+    "Delete '$DESKTOP\\\\KBD Trainer.lnk'"
+)
+
+# Set executable icon (if we had one)
+# set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/assets/icon.ico")
+# set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/assets/icon.ico")
+
+include(CPack)

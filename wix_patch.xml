@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CPackWiXPatch>
+  <!-- Remove duplicate empty directory components -->
+  <CPackWiXFragment Id="CM_C_EMPTY_INSTALL_ROOT">
+    <Component Id="CM_C_EMPTY_INSTALL_ROOT" Guid="A1B2C3D4-E5F6-7890-ABCD-123456789012">
+      <CreateFolder/>
+    </Component>
+  </CPackWiXFragment>
+</CPackWiXPatch>

@@ -143,6 +143,36 @@ cmake --build .
 - [ ] **Online Leaderboards** - Community competition
 - [ ] **Mobile Support** - Cross-platform training
 
+## 📦 Packaging & Distribution
+
+### Creating Release Packages
+
+The project supports multiple packaging formats:
+
+```bash
+# ZIP package (cross-platform)
+cmake --build . --config Release
+cpack -G ZIP
+
+# Windows NSIS Installer (requires NSIS)
+cpack -G NSIS
+
+# Windows MSI (requires WiX Toolset)
+cpack -G WIX
+```
+
+### Package Contents
+- **Executable**: `KBDTrainer.exe`
+- **Libraries**: SDL3 runtime DLLs
+- **Assets**: Game sprites and fonts
+- **Documentation**: README, installation guide
+- **Setup Assistant**: Interactive batch script
+
+### Distribution Platforms
+- **GitHub Releases**: Automated ZIP packages
+- **Direct Download**: Portable executables
+- **Future**: Steam, Microsoft Store, Package managers
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
