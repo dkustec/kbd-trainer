@@ -138,12 +138,13 @@ jobs:
             $cleanVersion = "1.0.0"
           }
           
-          cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPROJECT_VERSION="$cleanVersion"
+          # Configure with SDL3 options to fix GameInput compilation issues
+          cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPROJECT_VERSION="$cleanVersion" -DSDL_JOYSTICK_GAMEINPUT=OFF -DSDL_JOYSTICK_WGI=OFF
         } catch {
           Write-Error "CMake configuration failed: $_"
-          # Try without custom version
+          # Try without custom version but with SDL fixes
           Write-Host "Retrying CMake without custom version..."
-          cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DSDL_JOYSTICK_GAMEINPUT=OFF -DSDL_JOYSTICK_WGI=OFF
         }
 
     - name: Build
