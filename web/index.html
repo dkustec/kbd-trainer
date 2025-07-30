@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBD Trainer Web</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">KBD Trainer</h1>
+            <div class="mode-selector">
+                <button id="mode-p1-kbd" class="mode-btn active">P1 KBD</button>
+                <button id="mode-p2-kbd" class="mode-btn">P2 KBD</button>
+                <button id="mode-p1-wd" class="mode-btn">P1 WD</button>
+                <button id="mode-p2-wd" class="mode-btn">P2 WD</button>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="game-area">
+            <!-- Current Mode Display -->
+            <div class="mode-display">
+                <h2 id="current-mode">P1 KBD</h2>
+            </div>
+
+            <!-- Pattern Display - MAIN FOCUS -->
+            <div class="pattern-container">
+                <div class="pattern-label">Pattern:</div>
+                <div id="pattern-display" class="pattern-display">
+                    <!-- Pattern steps will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Status Display - PROMINENT -->
+            <div class="status-container">
+                <div id="game-status" class="game-status status-menu">Select mode and press Start</div>
+                <div class="last-input-container">
+                    <span class="last-input-label">Last Input:</span>
+                    <span id="last-input" class="last-input">●</span>
+                </div>
+            </div>
+
+            <!-- Score Display - LARGE -->
+            <div class="score-container">
+                <div class="score-item">
+                    <span class="score-label">Score</span>
+                    <span id="score" class="score-value">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">High Score</span>
+                    <span id="highscore" class="score-value">0</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="start-btn" class="control-btn primary">Start</button>
+            <button id="reset-btn" class="control-btn secondary">Reset</button>
+        </div>
+
+        <!-- Gamepad Status Panel -->
+        <div id="gamepad-panel" class="gamepad-panel">
+            <div class="gamepad-header">
+                <span class="gamepad-title">Controllers</span>
+                <button id="gamepad-toggle" class="gamepad-toggle">Show</button>
+            </div>
+            <div id="gamepad-list" class="gamepad-list hidden">
+                <div class="gamepad-item">No controllers detected</div>
+            </div>
+        </div>
+
+        <!-- Instructions - Minimal -->
+        <footer class="instructions">
+            <div class="instruction-group">
+                <strong>Keyboard:</strong> Arrow Keys, WASD, Numpad
+            </div>
+            <div class="instruction-group">
+                <strong>Gamepad:</strong> D-Pad, Left Stick
+            </div>
+            <div class="instruction-group">
+                <strong>Controls:</strong> Space=Start/Stop, R=Reset, 1-4=Mode Select
+            </div>
+        </footer>
+    </div>
+
+    <!-- Game Scripts -->
+    <script src="game-engine.js"></script>
+    <script src="input-handler.js"></script>
+    <script src="ui-controller.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
