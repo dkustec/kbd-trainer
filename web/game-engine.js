@@ -52,6 +52,7 @@ class GameEngine {
         
         // Input tracking
         this.prevDirection = 'neutral';
+        this.ignoreNextInput = false; // Flag to ignore stale input after miss pause reset
         
         // Highscores for each mode
         this.highscores = [0, 0, 0, 0];
@@ -62,11 +63,10 @@ class GameEngine {
     }
     
     setMode(modeIndex) {
-        if (modeIndex >= 0 && modeIndex < 4) {
+        if (modeIndex >= 0 && modeIndex < Object.keys(this.modes).length) {
             this.selectedMode = modeIndex;
-            return true;
+            this.highscore = this.highscores[this.selectedMode];
         }
-        return false;
     }
     
     startGame() {
@@ -81,6 +81,11 @@ class GameEngine {
         this.missCountdown = 0;
         this.runGame = true;
         this.prevDirection = 'neutral';
+        
+        // Reset input handler state for clean start
+        if (window.inputHandler) {
+            window.inputHandler.resetInputState();
+        }
     }
     
     stopGame() {
@@ -90,10 +95,18 @@ class GameEngine {
     
     update(direction) {
         if (this.runGame) {
-            this.updateGame(direction);
+            if (direction) {
+                this.updateGame(direction);
+            }
         } else {
             this.updateMenu(direction);
         }
+    }
+    
+    // Simplified game state update (no longer needs continuous miss pause countdown)
+    updateGameState() {
+        // This method is now primarily for UI controller calls
+        // Miss pause is handled by setTimeout in updateGame()
     }
     
     updateMenu(direction) {
@@ -119,52 +132,62 @@ class GameEngine {
     updateGame(direction) {
         this.currInput = direction;
         
-        // Handle miss pause - wait 3 seconds before resetting
+        // Don't process new input during miss pause
         if (this.inMissPause) {
-            const currentTime = performance.now();
-            const pauseDuration = 3000; // 3 seconds in milliseconds
-            const elapsed = currentTime - this.missTime;
-            
-            // Calculate countdown (3, 2, 1, 0)
-            const remaining = pauseDuration - elapsed;
-            this.missCountdown = Math.max(0, Math.ceil(remaining / 1000)); // 1000ms per count (3->2->1->0)
-            
-            if (elapsed >= pauseDuration) {
-                // Reset after pause
-                this.playerPos = 0;
-                this.score = 0;
-                this.lastInputAcc = 'none';
-                this.inMissPause = false;
-                this.missCountdown = 0;
-                this.prevDirection = 'neutral'; // Reset to neutral, not current direction
-                console.log('Miss pause ended - game reset');
-                
-                // Force multiple UI updates immediately after miss pause ends
-                if (window.uiController) {
-                    window.uiController.updateUI();
-                    setTimeout(() => window.uiController.updateUI(), 10);
-                    setTimeout(() => window.uiController.updateUI(), 50);
-                }
-            }
             return;
         }
         
+        // Only process if direction changed (prevent duplicate processing)
+        if (direction === this.prevDirection) {
+            return;
+        }
+        this.prevDirection = direction;
+        
+        // Check if we just had a failed input and need to start miss pause
         if (this.lastInputAcc === 'fail') {
             // Start miss pause timer
-            this.missTime = performance.now();
             this.inMissPause = true;
-            console.log('Miss detected - starting 2 second pause');
+            this.missCountdown = 2; // Start countdown at 2 seconds
+            this.lastInputAcc = 'none'; // Clear immediately to prevent UI failure state during pause
+            
+            // Update countdown every 100ms for smooth display
+            const countdownInterval = setInterval(() => {
+                if (this.inMissPause) {
+                    this.missCountdown -= 0.1;
+                    if (this.missCountdown <= 0) {
+                        clearInterval(countdownInterval);
+                        this.playerPos = 0;
+                        this.score = 0; // Reset score to 0 as per original C logic
+                        this.lastInputAcc = 'none';
+                        this.inMissPause = false;
+                        this.missCountdown = 0;
+                        this.prevDirection = 'neutral';
+                        this.lastInput = 'neutral';
+                        
+                        // Reset input handler state
+                        if (window.inputHandler) {
+                            window.inputHandler.resetInputState();
+                        }
+                        
+                        // Clear all UI state and force updates
+                        if (window.uiController) {
+                            window.uiController.updateUI();
+                        }
+                    }
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 100); // Update every 100ms
+            
             return;
         }
         
-        // No update if input has not changed
-        if (direction === this.prevDirection) return;
-        
+        // Input processing
         const currentMode = this.getCurrentMode();
         const expectedInput = currentMode.pattern[this.playerPos % currentMode.patternSize];
         
         if (direction === expectedInput) {
-            // Correct input - enhanced with combo and stats
+            // Correct input - simple 50 points as per original C logic
             this.totalInputs++;
             this.perfectInputs++;
             this.currentCombo++;
@@ -173,45 +196,41 @@ class GameEngine {
                 this.maxCombo = this.currentCombo;
             }
             
-            // Base score with combo multiplier
-            let points = 50;
-            if (this.currentCombo > 1) {
-                points += Math.floor(this.currentCombo * 10); // +10 points per combo
-            }
+            // Simple scoring: 50 points per correct input (original C logic)
+            this.score += 50;
             
-            this.score += points;
             if (this.score > this.highscore) {
                 this.highscore = this.score;
             }
             
             if (this.playerPos === currentMode.patternSize - 1) {
                 this.playerPos = 0;
-                // Pattern completion bonus
-                this.score += 100;
+                this.lastInput = 'neutral';
+                this.lastInputAcc = 'none';
+                
+                setTimeout(() => {
+                    if (window.uiController) {
+                        window.uiController.updateUI();
+                    }
+                }, 50);
             } else {
                 this.playerPos += 1;
+                this.lastInput = direction;
+                this.lastInputAcc = 'success';
             }
             
-            this.prevDirection = direction;
-            this.lastInput = direction;
-            this.lastInputAcc = 'success';
-            
-            // Update accuracy
             this.updateAccuracy();
         } else {
-            // Incorrect input - enhanced with combo and stats
-            this.prevDirection = direction;
+            // Wrong input - trigger fail at any position (strict mode)
+            this.totalInputs++;
+            this.missedInputs++;
+            this.currentCombo = 0;
+            this.lastInput = direction;
+            this.lastInputAcc = 'fail';
             
-            if (this.playerPos !== 0) {
-                this.totalInputs++;
-                this.missedInputs++;
-                this.currentCombo = 0; // Reset combo on miss
-                this.lastInput = direction;
-                this.lastInputAcc = 'fail';
-                
-                // Update accuracy
-                this.updateAccuracy();
-            }
+            console.log(`Wrong input at position ${this.playerPos}: got ${direction}, expected ${expectedInput} - triggering miss pause`);
+            
+            this.updateAccuracy();
         }
     }
     
@@ -236,6 +255,11 @@ class GameEngine {
         this.inMissPause = false;
         this.missCountdown = 0;
         this.prevDirection = 'neutral';
+        
+        // Reset input handler state
+        if (window.inputHandler) {
+            window.inputHandler.resetInputState();
+        }
         
         if (!preserveStats) {
             this.totalInputs = 0;

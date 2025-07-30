@@ -703,21 +703,34 @@ body {
     border-color: var(--accent-cyan);
     background: var(--bg-tertiary);
     box-shadow: var(--glow-accent);
-    animation: pulse-active 0.8s infinite alternate;
+    animation: pulse-active 0.4s infinite alternate; /* Faster for 60 FPS */
+}
+
+.direction-icon.neutral {
+    border-color: var(--primary-violet);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
 }
 
 .direction-icon.completed {
     border-color: var(--success-green);
     background: var(--bg-tertiary);
     color: var(--success-green);
-    animation: success-flash 0.5s ease;
+    animation: success-flash 0.25s ease; /* Faster for 60 FPS */
 }
 
 .direction-icon.failed {
     border-color: var(--error-red);
     background: var(--bg-tertiary);
     color: var(--error-red);
-    animation: damage-shake 0.4s ease;
+    animation: damage-shake 0.2s ease; /* Faster for 60 FPS */
+}
+
+.direction-icon.failed-static {
+    border-color: var(--error-red);
+    background: var(--bg-tertiary);
+    color: var(--error-red);
+    /* No animation - static state during miss pause */
 }
 
 /* Enhanced Animations */

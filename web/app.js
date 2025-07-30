@@ -24,8 +24,13 @@ class KBDTrainerApp {
         // Initialize input handler
         this.inputHandler = new InputHandler(this.gameEngine);
         
+        // Expose input handler globally for game engine access
+        window.inputHandler = this.inputHandler;
+        
         // Set default mode selection (P1 KBD - mode 0)
+        console.log('App init - about to call selectMode(0), current selectedMode:', this.gameEngine.selectedMode);
         this.uiController.selectMode(0);
+        console.log('App init - after selectMode(0), selectedMode:', this.gameEngine.selectedMode);
         
         console.log('KBD Trainer Web initialized successfully!');
         console.log('Controls:');

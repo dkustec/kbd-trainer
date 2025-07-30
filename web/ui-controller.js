@@ -14,16 +14,10 @@ class UIController {
         this.setupEventListeners();
         this.updateUI();
         
-        // Update UI regularly - more frequent during miss pause
+        // Reduce update frequency to prevent flashing
         setInterval(() => {
             this.updateUI();
-            // During miss pause, update more frequently to catch when it ends
-            if (this.gameEngine.inMissPause) {
-                // Check every 50ms during miss pause for immediate UI response
-                setTimeout(() => this.updateUI(), 50);
-                setTimeout(() => this.updateUI(), 100);
-            }
-        }, 100);
+        }, 250); // Update every 250ms instead of 100ms
         
         // Update gamepad status every 500ms
         setInterval(() => {
@@ -37,7 +31,9 @@ class UIController {
     setupEventListeners() {
         // Enhanced mode selection cards
         document.querySelectorAll('.mode-card').forEach((card, index) => {
-            card.addEventListener('click', () => this.selectMode(index));
+            card.addEventListener('click', () => {
+                this.selectMode(index);
+            });
         });
         
         // Control buttons
@@ -79,6 +75,9 @@ class UIController {
     }
     
     updateUI() {
+        // Always update game state first (for miss pause countdown, etc.)
+        this.gameEngine.updateGameState();
+        
         // Update mode selection
         this.updateModeButtons();
         
@@ -127,11 +126,11 @@ class UIController {
     updatePatternDisplay() {
         const patternEl = document.getElementById('pattern-display');
         if (!patternEl) return;
-        
+
         const currentMode = this.gameEngine.getCurrentMode();
         const pattern = currentMode.pattern;
         
-        // Only rebuild if pattern changed or first time
+        // Only rebuild if pattern length changed or pattern is empty
         if (patternEl.children.length !== pattern.length) {
             patternEl.innerHTML = '';
             
@@ -142,15 +141,24 @@ class UIController {
                 stepEl.dataset.index = index; // Store index for reference
                 patternEl.appendChild(stepEl);
             });
+        } else {
+            // Update symbols without rebuilding if pattern content changed
+            Array.from(patternEl.children).forEach((stepEl, index) => {
+                const expectedSymbol = this.directionToSymbol(pattern[index]);
+                const currentSymbol = stepEl.querySelector('.icon-symbol').textContent;
+                if (currentSymbol !== expectedSymbol) {
+                    stepEl.querySelector('.icon-symbol').textContent = expectedSymbol;
+                }
+            });
         }
         
-        // Update states of existing icons without rebuilding
+        // Update states of existing icons
         Array.from(patternEl.children).forEach((stepEl, index) => {
             // Clear all state classes first
             stepEl.className = 'direction-icon';
             
             // Determine state based on game progress
-            if (this.gameEngine.runGame && this.hasStartedGame) {
+            if (this.gameEngine.runGame) {
                 if (index === this.gameEngine.playerPos) {
                     stepEl.classList.add('active');
                 } else if (index < this.gameEngine.playerPos) {
@@ -195,12 +203,9 @@ class UIController {
                 statusEl.className = 'game-status status-playing';
                 break;
             case 'miss_pause':
-                const countdown = this.gameEngine.missCountdown;
-                if (countdown > 0) {
-                    statusEl.innerHTML = `MISS!<br><span class="countdown">${countdown}</span>`;
-                } else {
-                    statusEl.innerHTML = `MISS!<br><span class="countdown">0</span>`;
-                }
+                // Display countdown timer
+                const countdown = Math.ceil(this.gameEngine.missCountdown);
+                statusEl.innerHTML = `MISS!<br><span class="countdown">Start again in ${countdown}...</span>`;
                 statusEl.className = 'game-status status-miss';
                 break;
         }

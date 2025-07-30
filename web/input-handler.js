@@ -10,6 +10,13 @@ class InputHandler {
         this.gamepadIndex = -1;
         this.gamepadConnected = false;
         
+        // Track gamepad input state to detect input changes
+        this.gamepadCurrentDirection = 'neutral';
+        this.gamepadLastProcessedDirection = 'neutral';
+        
+        // Track keyboard pressed keys for neutral detection
+        this.pressedKeys = new Set();
+        
         // Track button states to prevent repeat
         this.buttonStates = {
             start: false,
@@ -21,7 +28,8 @@ class InputHandler {
     
     init() {
         // Keyboard event listeners
-        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+        document.addEventListener('keydown', (e) => this.handleKeydown(e));
+        document.addEventListener('keyup', (e) => this.handleKeyup(e));
         
         // Gamepad connection events
         window.addEventListener('gamepadconnected', (e) => this.onGamepadConnected(e));
@@ -42,7 +50,7 @@ class InputHandler {
         }, 50); // Check every 50ms during miss pause
     }
     
-    handleKeyboard(event) {
+    handleKeydown(event) {
         // Prevent key repeat
         if (event.repeat) return;
         
@@ -52,21 +60,17 @@ class InputHandler {
             return;
         }
         
-        let direction = this.mapKeyToDirection(event.code);
-        
-        if (direction) {
-            this.processDirectionInput(direction);
+        // Track pressed directional keys
+        if (this.isDirectionalKey(event.code)) {
+            this.pressedKeys.add(event.code);
+            this.updateKeyboardDirection();
             event.preventDefault();
+            return;
         }
         
         // Handle special keys
         switch (event.code) {
             case 'Space':
-                // Block Space during miss pause
-                if (this.gameEngine.inMissPause) {
-                    event.preventDefault();
-                    return;
-                }
                 if (this.gameEngine.runGame) {
                     this.gameEngine.stopGame();
                 } else {
@@ -77,11 +81,6 @@ class InputHandler {
                 break;
                 
             case 'Escape':
-                // Block Escape during miss pause
-                if (this.gameEngine.inMissPause) {
-                    event.preventDefault();
-                    return;
-                }
                 if (this.gameEngine.runGame) {
                     this.gameEngine.stopGame();
                     this.updateUI();
@@ -90,11 +89,6 @@ class InputHandler {
                 break;
                 
             case 'KeyR':
-                // Block Reset during miss pause
-                if (this.gameEngine.inMissPause) {
-                    event.preventDefault();
-                    return;
-                }
                 this.gameEngine.stopGame();
                 this.gameEngine.playerPos = 0;
                 this.gameEngine.score = 0;
@@ -104,38 +98,21 @@ class InputHandler {
                 break;
                 
             case 'Digit1':
-                // Block mode changes during miss pause
-                if (this.gameEngine.inMissPause) {
-                    event.preventDefault();
-                    return;
-                }
                 this.gameEngine.setMode(0);
                 this.updateUI();
                 event.preventDefault();
                 break;
             case 'Digit2':
-                if (this.gameEngine.inMissPause) {
-                    event.preventDefault();
-                    return;
-                }
                 this.gameEngine.setMode(1);
                 this.updateUI();
                 event.preventDefault();
                 break;
             case 'Digit3':
-                if (this.gameEngine.inMissPause) {
-                    event.preventDefault();
-                    return;
-                }
                 this.gameEngine.setMode(2);
                 this.updateUI();
                 event.preventDefault();
                 break;
             case 'Digit4':
-                if (this.gameEngine.inMissPause) {
-                    event.preventDefault();
-                    return;
-                }
                 this.gameEngine.setMode(3);
                 this.updateUI();
                 event.preventDefault();
@@ -143,35 +120,80 @@ class InputHandler {
         }
     }
     
-    mapKeyToDirection(keyCode) {
-        const keyMap = {
-            // Arrow keys
-            'ArrowUp': 'up',
-            'ArrowDown': 'down', 
-            'ArrowLeft': 'back',
-            'ArrowRight': 'forward',
-            
-            // WASD
-            'KeyW': 'up',
-            'KeyS': 'down',
-            'KeyA': 'back',
-            'KeyD': 'forward',
-            
-            // Numpad
-            'Numpad8': 'up',
-            'Numpad2': 'down',
-            'Numpad4': 'back',
-            'Numpad6': 'forward',
-            'Numpad7': 'up-back',
-            'Numpad9': 'up-forward',
-            'Numpad1': 'down-back',
-            'Numpad3': 'down-forward',
-            'Numpad5': 'neutral'
-        };
+    handleKeyup(event) {
+        // Block all input during miss pause
+        if (this.gameEngine.inMissPause) {
+            event.preventDefault();
+            return;
+        }
         
-        return keyMap[keyCode] || null;
+        // Track released directional keys
+        if (this.isDirectionalKey(event.code)) {
+            this.pressedKeys.delete(event.code);
+            this.updateKeyboardDirection();
+            event.preventDefault();
+        }
     }
     
+    isDirectionalKey(keyCode) {
+        const directionalKeys = [
+            // Arrow keys
+            'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+            // WASD
+            'KeyW', 'KeyS', 'KeyA', 'KeyD',
+            // Numpad
+            'Numpad8', 'Numpad2', 'Numpad4', 'Numpad6',
+            'Numpad7', 'Numpad9', 'Numpad1', 'Numpad3', 'Numpad5'
+        ];
+        return directionalKeys.includes(keyCode);
+    }
+    
+    updateKeyboardDirection() {
+        let direction = 'neutral';
+        
+        // Check for diagonal directions first (combinations)
+        if ((this.pressedKeys.has('ArrowUp') || this.pressedKeys.has('KeyW') || this.pressedKeys.has('Numpad8')) &&
+            (this.pressedKeys.has('ArrowLeft') || this.pressedKeys.has('KeyA') || this.pressedKeys.has('Numpad4'))) {
+            direction = 'up-back';
+        } else if ((this.pressedKeys.has('ArrowUp') || this.pressedKeys.has('KeyW') || this.pressedKeys.has('Numpad8')) &&
+                   (this.pressedKeys.has('ArrowRight') || this.pressedKeys.has('KeyD') || this.pressedKeys.has('Numpad6'))) {
+            direction = 'up-forward';
+        } else if ((this.pressedKeys.has('ArrowDown') || this.pressedKeys.has('KeyS') || this.pressedKeys.has('Numpad2')) &&
+                   (this.pressedKeys.has('ArrowLeft') || this.pressedKeys.has('KeyA') || this.pressedKeys.has('Numpad4'))) {
+            direction = 'down-back';
+        } else if ((this.pressedKeys.has('ArrowDown') || this.pressedKeys.has('KeyS') || this.pressedKeys.has('Numpad2')) &&
+                   (this.pressedKeys.has('ArrowRight') || this.pressedKeys.has('KeyD') || this.pressedKeys.has('Numpad6'))) {
+            direction = 'down-forward';
+        }
+        // Check for single directions
+        else if (this.pressedKeys.has('ArrowUp') || this.pressedKeys.has('KeyW') || this.pressedKeys.has('Numpad8')) {
+            direction = 'up';
+        } else if (this.pressedKeys.has('ArrowDown') || this.pressedKeys.has('KeyS') || this.pressedKeys.has('Numpad2')) {
+            direction = 'down';
+        } else if (this.pressedKeys.has('ArrowLeft') || this.pressedKeys.has('KeyA') || this.pressedKeys.has('Numpad4')) {
+            direction = 'back';
+        } else if (this.pressedKeys.has('ArrowRight') || this.pressedKeys.has('KeyD') || this.pressedKeys.has('Numpad6')) {
+            direction = 'forward';
+        }
+        // Check for numpad diagonals
+        else if (this.pressedKeys.has('Numpad7')) {
+            direction = 'up-back';
+        } else if (this.pressedKeys.has('Numpad9')) {
+            direction = 'up-forward';
+        } else if (this.pressedKeys.has('Numpad1')) {
+            direction = 'down-back';
+        } else if (this.pressedKeys.has('Numpad3')) {
+            direction = 'down-forward';
+        } else if (this.pressedKeys.has('Numpad5')) {
+            direction = 'neutral';
+        }
+        
+        // Only process if direction changed
+        if (direction !== this.lastDirection) {
+            this.processDirectionInput(direction);
+        }
+    }
+
     onGamepadConnected(event) {
         console.log('Gamepad connected:', event.gamepad.id);
         console.log('Gamepad mapping:', event.gamepad.mapping);
@@ -275,8 +297,12 @@ class InputHandler {
             }
         }
         
-        // Process direction
-        this.processDirectionInput(direction);
+        // Process direction - only when direction actually changes
+        if (direction !== this.gamepadCurrentDirection) {
+            console.log(`Gamepad direction changed: ${this.gamepadCurrentDirection} → ${direction}`);
+            this.gamepadCurrentDirection = direction;
+            this.processDirectionInput(direction);
+        }
         
         // Handle face buttons
         const startPressed = gamepad.buttons[0] && gamepad.buttons[0].pressed; // A button
@@ -306,12 +332,21 @@ class InputHandler {
     }
     
     processDirectionInput(direction) {
-        // Only process if direction actually changed
-        if (direction === this.lastDirection) return;
-        
+        // Update last direction for keyboard compatibility
         this.lastDirection = direction;
+        
+        // Send input to game engine
         this.gameEngine.update(direction);
+        
+        // Immediate UI update for responsive highlighting
         this.updateUI();
+    }
+    
+    // Reset input state - called when game resets
+    resetInputState() {
+        this.lastDirection = 'neutral';
+        this.gamepadCurrentDirection = 'neutral';
+        this.pressedKeys.clear(); // Clear all pressed keys
     }
     
     updateUI() {
