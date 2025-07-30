@@ -24,6 +24,9 @@ class KBDTrainerApp {
         // Initialize input handler
         this.inputHandler = new InputHandler(this.gameEngine);
         
+        // Set default mode selection (P1 KBD - mode 0)
+        this.uiController.selectMode(0);
+        
         console.log('KBD Trainer Web initialized successfully!');
         console.log('Controls:');
         console.log('  Keyboard: Arrow Keys, WASD, Numpad');

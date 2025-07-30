@@ -34,11 +34,10 @@ class UIController {
     }
     
     setupEventListeners() {
-        // Mode selection buttons
-        document.getElementById('mode-p1-kbd').addEventListener('click', () => this.selectMode(0));
-        document.getElementById('mode-p2-kbd').addEventListener('click', () => this.selectMode(1));
-        document.getElementById('mode-p1-wd').addEventListener('click', () => this.selectMode(2));
-        document.getElementById('mode-p2-wd').addEventListener('click', () => this.selectMode(3));
+        // Enhanced mode selection cards
+        document.querySelectorAll('.mode-card').forEach((card, index) => {
+            card.addEventListener('click', () => this.selectMode(index));
+        });
         
         // Control buttons
         document.getElementById('start-btn').addEventListener('click', () => this.toggleGame());
@@ -50,6 +49,16 @@ class UIController {
     
     selectMode(modeIndex) {
         this.gameEngine.setMode(modeIndex);
+        
+        // Update mode card selection
+        document.querySelectorAll('.mode-card').forEach((card, index) => {
+            if (index === modeIndex) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+        
         this.updateUI();
     }
     
@@ -63,11 +72,7 @@ class UIController {
     }
     
     resetGame() {
-        this.gameEngine.stopGame();
-        this.gameEngine.playerPos = 0;
-        this.gameEngine.score = 0;
-        this.gameEngine.lastInputAcc = 'none';
-        this.gameEngine.inMissPause = false;
+        this.gameEngine.resetGame(); // Use enhanced reset method
         this.updateUI();
     }
     
@@ -112,6 +117,12 @@ class UIController {
         
         // Score display
         this.updateScoreDisplay();
+        
+        // Enhanced stats display
+        this.updateStatsDisplay();
+        
+        // Combo display
+        this.updateComboDisplay();
     }
     
     updatePatternDisplay() {
@@ -125,17 +136,27 @@ class UIController {
         
         pattern.forEach((direction, index) => {
             const stepEl = document.createElement('div');
-            stepEl.className = 'pattern-step';
-            stepEl.textContent = this.directionToSymbol(direction);
+            stepEl.className = 'direction-icon';
+            stepEl.innerHTML = `<span class="icon-symbol">${this.directionToSymbol(direction)}</span>`;
             
-            // Highlight current step
-            if (this.gameEngine.runGame && index === this.gameEngine.playerPos) {
-                stepEl.classList.add('current');
-            }
-            
-            // Show completed steps
-            if (this.gameEngine.runGame && index < this.gameEngine.playerPos) {
-                stepEl.classList.add('completed');
+            // Determine state based on game progress
+            if (this.gameEngine.runGame) {
+                if (index === this.gameEngine.playerPos) {
+                    stepEl.classList.add('active');
+                } else if (index < this.gameEngine.playerPos) {
+                    stepEl.classList.add('completed');
+                } else {
+                    stepEl.classList.add('neutral');
+                }
+                
+                // Add failure animation if last input was wrong at this position
+                if (this.gameEngine.lastInputAcc === 'fail' && index === this.gameEngine.playerPos) {
+                    stepEl.classList.add('failed');
+                    // Remove animation class after animation completes
+                    setTimeout(() => stepEl.classList.remove('failed'), 400);
+                }
+            } else {
+                stepEl.classList.add('neutral');
             }
             
             patternEl.appendChild(stepEl);
@@ -192,6 +213,70 @@ class UIController {
                 lastInputEl.classList.add('success');
             } else if (this.gameEngine.lastInputAcc === 'fail') {
                 lastInputEl.classList.add('fail');
+            }
+        }
+    }
+    
+    updateStatsDisplay() {
+        const stats = this.gameEngine.getStats();
+        
+        // Update accuracy
+        const accuracyEl = document.getElementById('accuracy-value');
+        const accuracyFillEl = document.getElementById('accuracy-fill');
+        if (accuracyEl) {
+            accuracyEl.textContent = stats.accuracy;
+            
+            // Add animation class for changes
+            if (this.gameEngine.lastInputAcc === 'success') {
+                accuracyEl.parentElement.classList.add('animate-success');
+                setTimeout(() => accuracyEl.parentElement.classList.remove('animate-success'), 500);
+            } else if (this.gameEngine.lastInputAcc === 'fail') {
+                accuracyEl.parentElement.classList.add('animate-error');
+                setTimeout(() => accuracyEl.parentElement.classList.remove('animate-error'), 500);
+            }
+        }
+        if (accuracyFillEl) {
+            accuracyFillEl.style.width = `${stats.accuracy}%`;
+        }
+        
+        // Update total inputs
+        const totalInputsEl = document.getElementById('total-inputs');
+        if (totalInputsEl) {
+            totalInputsEl.textContent = stats.totalInputs;
+        }
+        
+        // Update perfect inputs
+        const perfectInputsEl = document.getElementById('perfect-inputs');
+        if (perfectInputsEl) {
+            perfectInputsEl.textContent = stats.perfectInputs;
+        }
+        
+        // Update missed inputs
+        const missedInputsEl = document.getElementById('missed-inputs');
+        if (missedInputsEl) {
+            missedInputsEl.textContent = stats.missedInputs;
+        }
+    }
+    
+    updateComboDisplay() {
+        const comboDisplayEl = document.getElementById('combo-display');
+        const comboCounterEl = document.getElementById('combo-counter');
+        
+        if (comboDisplayEl && comboCounterEl) {
+            if (this.gameEngine.currentCombo > 1) {
+                comboDisplayEl.classList.add('active');
+                comboCounterEl.textContent = `×${this.gameEngine.currentCombo}`;
+                
+                // Add glow effect for high combos
+                if (this.gameEngine.currentCombo >= 10) {
+                    comboCounterEl.style.color = 'var(--perfect-purple)';
+                } else if (this.gameEngine.currentCombo >= 5) {
+                    comboCounterEl.style.color = 'var(--secondary-violet)';
+                } else {
+                    comboCounterEl.style.color = 'var(--combo-orange)';
+                }
+            } else {
+                comboDisplayEl.classList.remove('active');
             }
         }
     }

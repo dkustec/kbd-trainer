@@ -42,6 +42,14 @@ class GameEngine {
         this.inMissPause = false;
         this.missCountdown = 0; // Countdown timer for miss pause
         
+        // Enhanced stats tracking
+        this.totalInputs = 0;
+        this.perfectInputs = 0;
+        this.missedInputs = 0;
+        this.currentCombo = 0;
+        this.maxCombo = 0;
+        this.accuracy = 100;
+        
         // Input tracking
         this.prevDirection = 'neutral';
         
@@ -156,14 +164,30 @@ class GameEngine {
         const expectedInput = currentMode.pattern[this.playerPos % currentMode.patternSize];
         
         if (direction === expectedInput) {
-            // Correct input
-            this.score += 50;
+            // Correct input - enhanced with combo and stats
+            this.totalInputs++;
+            this.perfectInputs++;
+            this.currentCombo++;
+            
+            if (this.currentCombo > this.maxCombo) {
+                this.maxCombo = this.currentCombo;
+            }
+            
+            // Base score with combo multiplier
+            let points = 50;
+            if (this.currentCombo > 1) {
+                points += Math.floor(this.currentCombo * 10); // +10 points per combo
+            }
+            
+            this.score += points;
             if (this.score > this.highscore) {
                 this.highscore = this.score;
             }
             
             if (this.playerPos === currentMode.patternSize - 1) {
                 this.playerPos = 0;
+                // Pattern completion bonus
+                this.score += 100;
             } else {
                 this.playerPos += 1;
             }
@@ -171,15 +195,70 @@ class GameEngine {
             this.prevDirection = direction;
             this.lastInput = direction;
             this.lastInputAcc = 'success';
+            
+            // Update accuracy
+            this.updateAccuracy();
         } else {
-            // Incorrect input
+            // Incorrect input - enhanced with combo and stats
             this.prevDirection = direction;
             
             if (this.playerPos !== 0) {
+                this.totalInputs++;
+                this.missedInputs++;
+                this.currentCombo = 0; // Reset combo on miss
                 this.lastInput = direction;
                 this.lastInputAcc = 'fail';
+                
+                // Update accuracy
+                this.updateAccuracy();
             }
         }
+    }
+    
+    // Enhanced accuracy calculation
+    updateAccuracy() {
+        if (this.totalInputs === 0) {
+            this.accuracy = 100;
+        } else {
+            this.accuracy = Math.round((this.perfectInputs / this.totalInputs) * 100);
+        }
+    }
+    
+    // Enhanced reset with stats preservation option
+    resetGame(preserveStats = false) {
+        this.runGame = false;
+        this.playerPos = 0;
+        this.score = 0;
+        this.currInput = 'neutral';
+        this.lastInputAcc = 'none';
+        this.lastInput = 'neutral';
+        this.missTime = 0;
+        this.inMissPause = false;
+        this.missCountdown = 0;
+        this.prevDirection = 'neutral';
+        
+        if (!preserveStats) {
+            this.totalInputs = 0;
+            this.perfectInputs = 0;
+            this.missedInputs = 0;
+            this.currentCombo = 0;
+            this.maxCombo = 0;
+            this.accuracy = 100;
+        }
+    }
+    
+    // Get enhanced stats for UI
+    getStats() {
+        return {
+            score: this.score,
+            highscore: this.highscore,
+            accuracy: this.accuracy,
+            totalInputs: this.totalInputs,
+            perfectInputs: this.perfectInputs,
+            missedInputs: this.missedInputs,
+            currentCombo: this.currentCombo,
+            maxCombo: this.maxCombo
+        };
     }
     
     // Helper methods for UI

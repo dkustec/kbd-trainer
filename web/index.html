@@ -12,13 +12,53 @@
         <!-- Header -->
         <header class="header">
             <h1 class="logo">KBD Trainer</h1>
-            <div class="mode-selector">
-                <button id="mode-p1-kbd" class="mode-btn active">P1 KBD</button>
-                <button id="mode-p2-kbd" class="mode-btn">P2 KBD</button>
-                <button id="mode-p1-wd" class="mode-btn">P1 WD</button>
-                <button id="mode-p2-wd" class="mode-btn">P2 WD</button>
-            </div>
         </header>
+
+        <!-- Enhanced Mode Selector -->
+        <div class="mode-selector">
+            <div class="mode-card" id="mode-p1-kbd" data-mode="p1-kbd">
+                <div class="mode-title">P1 Korean Back Dash</div>
+                <div class="mode-description">Back → Neutral → Back → Down-Back</div>
+                <div class="pattern-preview">
+                    <div class="pattern-preview-icon">◄</div>
+                    <div class="pattern-preview-icon">○</div>
+                    <div class="pattern-preview-icon">◄</div>
+                    <div class="pattern-preview-icon">◣</div>
+                </div>
+            </div>
+            <div class="mode-card" id="mode-p2-kbd" data-mode="p2-kbd">
+                <div class="mode-title">P2 Korean Back Dash</div>
+                <div class="mode-description">Forward → Neutral → Forward → Down-Forward</div>
+                <div class="pattern-preview">
+                    <div class="pattern-preview-icon">►</div>
+                    <div class="pattern-preview-icon">○</div>
+                    <div class="pattern-preview-icon">►</div>
+                    <div class="pattern-preview-icon">◢</div>
+                </div>
+            </div>
+            <div class="mode-card" id="mode-p1-wd" data-mode="p1-wd">
+                <div class="mode-title">P1 Wave Dash</div>
+                <div class="mode-description">Forward → Neutral → Down → Down-Forward → Forward → Neutral</div>
+                <div class="pattern-preview">
+                    <div class="pattern-preview-icon">►</div>
+                    <div class="pattern-preview-icon">○</div>
+                    <div class="pattern-preview-icon">▼</div>
+                    <div class="pattern-preview-icon">◢</div>
+                    <div class="pattern-preview-icon">...</div>
+                </div>
+            </div>
+            <div class="mode-card selected" id="mode-p2-wd" data-mode="p2-wd">
+                <div class="mode-title">P2 Wave Dash</div>
+                <div class="mode-description">Back → Neutral → Down → Down-Back → Back → Neutral</div>
+                <div class="pattern-preview">
+                    <div class="pattern-preview-icon">◄</div>
+                    <div class="pattern-preview-icon">○</div>
+                    <div class="pattern-preview-icon">▼</div>
+                    <div class="pattern-preview-icon">◣</div>
+                    <div class="pattern-preview-icon">...</div>
+                </div>
+            </div>
+        </div>
 
         <!-- Main Game Area -->
         <main class="game-area">
@@ -54,6 +94,35 @@
                     <span class="score-label">High Score</span>
                     <span id="highscore" class="score-value">0</span>
                 </div>
+            </div>
+
+            <!-- Enhanced Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="accuracy-value">100</div>
+                    <div class="stat-label">Accuracy %</div>
+                    <div class="accuracy-bar">
+                        <div class="accuracy-fill" id="accuracy-fill" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-inputs">0</div>
+                    <div class="stat-label">Total Inputs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="perfect-inputs">0</div>
+                    <div class="stat-label">Perfect</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="missed-inputs">0</div>
+                    <div class="stat-label">Missed</div>
+                </div>
+            </div>
+
+            <!-- Combo Display -->
+            <div class="combo-display" id="combo-display">
+                <div class="combo-counter" id="combo-counter">×2</div>
+                <div class="combo-label">COMBO</div>
             </div>
         </main>
 
