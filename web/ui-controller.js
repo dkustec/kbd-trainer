@@ -136,31 +136,38 @@ class UIController {
             
             pattern.forEach((direction, index) => {
                 const stepEl = document.createElement('div');
-                stepEl.className = 'direction-icon';
-                stepEl.innerHTML = `<span class="icon-symbol">${this.directionToSymbol(direction)}</span>`;
+                stepEl.className = 'pattern-step';
+                
+                // Create and append direction image
+                const directionImg = this.createDirectionImage(direction, 'pattern-direction');
+                stepEl.appendChild(directionImg);
+                
                 stepEl.dataset.index = index; // Store index for reference
                 patternEl.appendChild(stepEl);
             });
         } else {
-            // Update symbols without rebuilding if pattern content changed
+            // Update images without rebuilding if pattern content changed
             Array.from(patternEl.children).forEach((stepEl, index) => {
-                const expectedSymbol = this.directionToSymbol(pattern[index]);
-                const currentSymbol = stepEl.querySelector('.icon-symbol').textContent;
-                if (currentSymbol !== expectedSymbol) {
-                    stepEl.querySelector('.icon-symbol').textContent = expectedSymbol;
+                const expectedDirection = pattern[index];
+                const currentImg = stepEl.querySelector('.pattern-direction');
+                const expectedSrc = this.directionToImage(expectedDirection);
+                
+                if (currentImg.src !== expectedSrc) {
+                    currentImg.src = expectedSrc;
+                    currentImg.alt = expectedDirection;
                 }
             });
         }
         
-        // Update states of existing icons
+        // Update states of existing pattern steps
         Array.from(patternEl.children).forEach((stepEl, index) => {
             // Clear all state classes first
-            stepEl.className = 'direction-icon';
+            stepEl.className = 'pattern-step';
             
             // Determine state based on game progress
             if (this.gameEngine.runGame) {
                 if (index === this.gameEngine.playerPos) {
-                    stepEl.classList.add('active');
+                    stepEl.classList.add('current');
                 } else if (index < this.gameEngine.playerPos) {
                     stepEl.classList.add('completed');
                 } else {
@@ -196,17 +203,48 @@ class UIController {
             case 'menu':
                 statusEl.textContent = 'Select mode and press Start';
                 statusEl.className = 'game-status status-menu';
+                statusEl.style.flexDirection = 'row'; // Ensure proper layout
                 break;
             case 'playing':
                 const expected = this.gameEngine.getExpectedInput();
-                statusEl.textContent = `Next: ${this.directionToSymbol(expected)}`;
+                // Create container for "Next:" text and direction image
+                statusEl.innerHTML = ''; // Clear previous content
+                const nextText = document.createElement('span');
+                nextText.textContent = 'Next: ';
+                nextText.style.marginRight = '8px';
+                
+                const directionImg = this.createDirectionImage(expected);
+                directionImg.style.width = '36px';  // Larger than Last Input (44px vs 32px)
+                directionImg.style.height = '36px';
+                directionImg.style.verticalAlign = 'middle';
+                
+                statusEl.appendChild(nextText);
+                statusEl.appendChild(directionImg);
                 statusEl.className = 'game-status status-playing';
+                statusEl.style.flexDirection = 'row'; // Ensure horizontal layout
+                break;
                 break;
             case 'miss_pause':
-                // Display countdown timer
+                // Display countdown timer with proper structure for flexbox
                 const countdown = Math.ceil(this.gameEngine.missCountdown);
-                statusEl.innerHTML = `MISS!<br><span class="countdown">Start again in ${countdown}...</span>`;
+                statusEl.innerHTML = ''; // Clear previous content
+                
+                const missText = document.createElement('div');
+                missText.textContent = 'MISS!';
+                missText.style.fontSize = '2.2rem';
+                missText.style.fontWeight = 'bold';
+                missText.style.color = 'var(--error-red)';
+                
+                const countdownText = document.createElement('div');
+                countdownText.textContent = `Start again in ${countdown}...`;
+                countdownText.className = 'countdown';
+                countdownText.style.fontSize = '1.4rem';
+                countdownText.style.marginTop = '8px';
+                
+                statusEl.appendChild(missText);
+                statusEl.appendChild(countdownText);
                 statusEl.className = 'game-status status-miss';
+                statusEl.style.flexDirection = 'column';
                 break;
         }
     }
@@ -226,7 +264,13 @@ class UIController {
         // Update last input
         const lastInputEl = document.getElementById('last-input');
         if (lastInputEl) {
-            lastInputEl.textContent = this.directionToSymbol(this.gameEngine.lastInput);
+            // Clear existing content
+            lastInputEl.innerHTML = '';
+            
+            // Create and append direction image
+            const directionImg = this.createDirectionImage(this.gameEngine.lastInput, 'last-input-direction');
+            lastInputEl.appendChild(directionImg);
+            
             lastInputEl.className = 'last-input';
             
             if (this.gameEngine.lastInputAcc === 'success') {
@@ -322,6 +366,49 @@ class UIController {
         };
         
         return symbols[direction] || '?';
+    }
+    
+    // New function to get direction image
+    directionToImage(direction) {
+        const imageMap = {
+            'neutral': 'n.png',
+            'up': 'u.png',
+            'up-forward': 'uf.png',
+            'forward': 'f.png',
+            'down-forward': 'df.png',
+            'down': 'd.png',
+            'down-back': 'db.png',
+            'back': 'b.png',
+            'up-back': 'ub.png'
+        };
+        
+        const filename = imageMap[direction] || 'n.png';
+        return `assets/directions/${filename}`;
+    }
+    
+    // Create direction image element
+    createDirectionImage(direction, className = '') {
+        const img = document.createElement('img');
+        img.src = this.directionToImage(direction);
+        img.alt = direction;
+        img.className = `direction-icon ${className}`;
+        img.loading = 'lazy';
+        
+        // Add error handling for missing images
+        img.onerror = () => {
+            console.warn(`Failed to load direction image: ${img.src}`);
+            // Fallback to colored text symbol with better styling
+            const span = document.createElement('span');
+            span.textContent = this.directionToSymbol(direction);
+            span.className = img.className;
+            span.style.fontSize = '1.5rem';
+            span.style.color = 'var(--accent-color)';
+            span.style.fontWeight = 'bold';
+            span.style.textShadow = '0 0 4px rgba(139, 92, 246, 0.5)';
+            img.parentNode?.replaceChild(span, img);
+        };
+        
+        return img;
     }
     
     toggleGamepadPanel() {
