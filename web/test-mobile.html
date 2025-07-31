@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-container { border: 2px solid #ccc; padding: 20px; margin: 20px 0; }
+        .mobile-test { background: #f0f0f0; padding: 10px; }
+        
+        /* Mobile-only styles */
+        .mobile-only { display: none; }
+        
+        @media (max-width: 480px) {
+            .mobile-only { 
+                display: block; 
+                background: red;
+                color: white;
+                padding: 10px;
+            }
+            .mobile-test {
+                background: lightgreen;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Mobile Layout Test</h1>
+    
+    <div class="test-container">
+        <h2>Mobile Detection Test</h2>
+        <div class="mobile-test">This should be light green on mobile (≤480px)</div>
+        <div class="mobile-only">This should ONLY appear on mobile</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Mode Selector Test</h2>
+        <div class="mode-selector-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0;">Training Modes</h3>
+            <button onclick="toggleTest()" id="test-toggle">Hide</button>
+        </div>
+        <div id="test-selector" style="border: 1px solid #ccc; padding: 10px; transition: all 0.3s ease;">
+            <div style="padding: 10px; margin: 5px 0; background: #eee;">Mode 1</div>
+            <div style="padding: 10px; margin: 5px 0; background: #eee;">Mode 2</div>
+            <div style="padding: 10px; margin: 5px 0; background: #eee;">Mode 3</div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleTest() {
+            const selector = document.getElementById('test-selector');
+            const button = document.getElementById('test-toggle');
+            
+            if (selector.style.maxHeight === '0px') {
+                selector.style.maxHeight = '300px';
+                selector.style.opacity = '1';
+                button.textContent = 'Hide';
+            } else {
+                selector.style.maxHeight = '0px';
+                selector.style.opacity = '0';
+                button.textContent = 'Show';
+            }
+        }
+        
+        // Test viewport width
+        console.log('Current viewport width:', window.innerWidth);
+        document.body.innerHTML += '<p>Current viewport width: ' + window.innerWidth + 'px</p>';
+    </script>
+</body>
+</html>

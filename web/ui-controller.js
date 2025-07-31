@@ -26,6 +26,8 @@ class UIController {
         
         // Expose globally
         window.uiController = this;
+        // Initialize instructions toggle UI
+        this.initializeInstructionsToggle();
     }
     
     setupEventListeners() {
@@ -42,6 +44,12 @@ class UIController {
         
         // Gamepad panel toggle
         document.getElementById('gamepad-toggle').addEventListener('click', () => this.toggleGamepadPanel());
+        
+        // Mode selector toggle for mobile
+        const modeSelectorToggle = document.getElementById('mode-selector-toggle');
+        if (modeSelectorToggle) {
+            modeSelectorToggle.addEventListener('click', () => this.toggleModeSelector());
+        }
     }
     
     selectMode(modeIndex) {
@@ -57,6 +65,18 @@ class UIController {
         });
         
         this.updateUI();
+        
+        // Auto-collapse mode selector on mobile after selection
+        if (window.innerWidth <= 480) {
+            const modeSelector = document.getElementById('mode-selector');
+            const toggleBtn = document.getElementById('mode-selector-toggle');
+            if (modeSelector && !modeSelector.classList.contains('collapsed')) {
+                setTimeout(() => {
+                    modeSelector.classList.add('collapsed');
+                    toggleBtn.textContent = 'Show';
+                }, 300); // Small delay to show the selection
+            }
+        }
     }
     
     toggleGame() {
@@ -422,6 +442,19 @@ class UIController {
         }
     }
     
+    toggleModeSelector() {
+        const modeSelector = document.getElementById('mode-selector');
+        const toggleBtn = document.getElementById('mode-selector-toggle');
+        
+        if (modeSelector.classList.contains('collapsed')) {
+            modeSelector.classList.remove('collapsed');
+            toggleBtn.textContent = 'Hide';
+        } else {
+            modeSelector.classList.add('collapsed');
+            toggleBtn.textContent = 'Show';
+        }
+    }
+    
     updateGamepadPanel() {
         const gamepadList = document.getElementById('gamepad-list');
         if (!gamepadList) return;
@@ -453,5 +486,28 @@ class UIController {
             
             gamepadList.appendChild(gamepadItem);
         });
+    }
+    
+    /**
+     * Initialize the instructions panel toggle behavior.
+     */
+    initializeInstructionsToggle() {
+        const toggle = document.getElementById('instructions-toggle');
+        const content = document.getElementById('instructions-content');
+        if (toggle && content) {
+            toggle.addEventListener('click', () => {
+                const hidden = content.classList.contains('hidden');
+                if (hidden) {
+                    content.classList.remove('hidden');
+                    toggle.textContent = 'Hide';
+                    setTimeout(() => {
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                    }, 100);
+                } else {
+                    content.classList.add('hidden');
+                    toggle.textContent = 'Show';
+                }
+            });
+        }
     }
 }

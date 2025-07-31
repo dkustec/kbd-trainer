@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Master Tekken movement techniques like Korean Back Dash and Wave Dash with interactive drills and real-time feedback.">
     <title>KBD Trainer Web</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
     <div class="app-container">
@@ -13,61 +15,75 @@
         <header class="header">
             <h1 class="logo">KBD Trainer</h1>
         </header>
-
         <!-- Enhanced Mode Selector -->
-        <div class="mode-selector">
+        <section aria-labelledby="mode-selector-heading" class="mode-selector-section">
+            <div class="mode-selector-header">
+                <h2 class="mode-selector-title">Training Modes</h2>
+                <button id="mode-selector-toggle" class="mode-selector-toggle mobile-only">Hide</button>
+            </div>
+            <div id="mode-selector" class="mode-selector">
             <div class="mode-card selected" id="mode-p1-kbd" data-mode="p1-kbd">
                 <div class="mode-title">P1 Korean Back Dash</div>
                 <div class="mode-description">Essential Tekken movement technique for creating space and positioning. Master this for competitive play!</div>
                 <div class="pattern-preview">
-                    <img src="assets/directions/b.png" alt="back" class="pattern-preview-icon">
-                    <img src="assets/directions/n.png" alt="neutral" class="pattern-preview-icon">
-                    <img src="assets/directions/b.png" alt="back" class="pattern-preview-icon">
-                    <img src="assets/directions/db.png" alt="down-back" class="pattern-preview-icon">
+                    <img src="assets/directions/b.png" alt="back" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/n.png" alt="neutral" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/b.png" alt="back" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/db.png" alt="down-back" loading="lazy" class="pattern-preview-icon">
                 </div>
             </div>
             <div class="mode-card" id="mode-p2-kbd" data-mode="p2-kbd">
                 <div class="mode-title">P2 Korean Back Dash</div>
                 <div class="mode-description">Player 2 side KBD - same technique, mirrored controls. Practice both sides for complete mastery!</div>
                 <div class="pattern-preview">
-                    <img src="assets/directions/f.png" alt="forward" class="pattern-preview-icon">
-                    <img src="assets/directions/n.png" alt="neutral" class="pattern-preview-icon">
-                    <img src="assets/directions/f.png" alt="forward" class="pattern-preview-icon">
-                    <img src="assets/directions/df.png" alt="down-forward" class="pattern-preview-icon">
+                    <img src="assets/directions/f.png" alt="forward" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/n.png" alt="neutral" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/f.png" alt="forward" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/df.png" alt="down-forward" loading="lazy" class="pattern-preview-icon">
                 </div>
             </div>
             <div class="mode-card" id="mode-p1-wd" data-mode="p1-wd">
                 <div class="mode-title">P1 Wave Dash</div>
                 <div class="mode-description">Advanced Mishima technique for rapid forward movement. Requires precise timing and execution!</div>
                 <div class="pattern-preview">
-                    <img src="assets/directions/f.png" alt="forward" class="pattern-preview-icon">
-                    <img src="assets/directions/n.png" alt="neutral" class="pattern-preview-icon">
-                    <img src="assets/directions/d.png" alt="down" class="pattern-preview-icon">
-                    <img src="assets/directions/df.png" alt="down-forward" class="pattern-preview-icon">
-                    <img src="assets/directions/f.png" alt="forward" class="pattern-preview-icon">
-                    <img src="assets/directions/n.png" alt="neutral" class="pattern-preview-icon">
+                    <img src="assets/directions/f.png" alt="forward" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/n.png" alt="neutral" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/d.png" alt="down" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/df.png" alt="down-forward" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/f.png" alt="forward" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/n.png" alt="neutral" loading="lazy" class="pattern-preview-icon">
                 </div>
             </div>
             <div class="mode-card" id="mode-p2-wd" data-mode="p2-wd">
                 <div class="mode-title">P2 Wave Dash</div>
                 <div class="mode-description">Player 2 side wave dash - master both sides for complete movement control in competitive matches!</div>
                 <div class="pattern-preview">
-                    <img src="assets/directions/b.png" alt="back" class="pattern-preview-icon">
-                    <img src="assets/directions/n.png" alt="neutral" class="pattern-preview-icon">
-                    <img src="assets/directions/d.png" alt="down" class="pattern-preview-icon">
-                    <img src="assets/directions/db.png" alt="down-back" class="pattern-preview-icon">
-                    <img src="assets/directions/b.png" alt="back" class="pattern-preview-icon">
-                    <img src="assets/directions/n.png" alt="neutral" class="pattern-preview-icon">
+                    <img src="assets/directions/b.png" alt="back" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/n.png" alt="neutral" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/d.png" alt="down" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/db.png" alt="down-back" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/b.png" alt="back" loading="lazy" class="pattern-preview-icon">
+                    <img src="assets/directions/n.png" alt="neutral" loading="lazy" class="pattern-preview-icon">
                 </div>
             </div>
-        </div>
+            </div>
+        </section>
 
         <!-- Main Game Area -->
         <main class="game-area">
             <!-- Two Column Layout -->
             <div class="game-layout">
-                <!-- Left Column: Main Game Content -->
                 <div class="left-column">
+                    <!-- Score Display - Vertical Stack -->
+                    <div class="score-container-vertical">
+                        <div class="score-item">
+                            <span class="score-label">High Score</span>
+                            <span id="highscore" class="score-value">0</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Left Column: Main Game Content -->
+                <div class="center-column">
                     <!-- Current Mode Display -->
                     <div class="mode-display">
                         <h2 id="current-mode">P1 KBD</h2>
@@ -83,7 +99,7 @@
 
                     <!-- Status Display - PROMINENT -->
                     <div class="status-container">
-                        <div id="game-status" class="game-status status-menu">Select mode and press Start</div>
+                        <div id="game-status" class="game-status status-menu" aria-live="polite">Select mode and press Start</div>
                     </div>
 
                     <!-- Game Info Row: Next and Last Input -->
@@ -127,10 +143,6 @@
                     <!-- Score Display - Vertical Stack -->
                     <div class="score-container-vertical">
                         <div class="score-item">
-                            <span class="score-label">High Score</span>
-                            <span id="highscore" class="score-value">0</span>
-                        </div>
-                        <div class="score-item">
                             <span class="score-label">Score</span>
                             <span id="score" class="score-value">0</span>
                         </div>
@@ -163,31 +175,39 @@
         </div>
 
         <!-- Instructions - Enhanced -->
-        <footer class="instructions">
+        <footer class="instructions-panel">
             <div class="instructions-header">
-                <h3>🎮 How to Use KBD Trainer</h3>
+                <span class="instructions-title">📖 Help & Instructions</span>
+                <button id="instructions-toggle" class="instructions-toggle">Show</button>
             </div>
-            <div class="instructions-content">
-                <div class="instruction-group">
-                    <strong>🎯 Goal:</strong> Master precise timing for Korean Back Dash (KBD) and Wave Dash techniques
-                </div>
-                <div class="instruction-group">
-                    <strong>⌨️ Controls:</strong> Arrow Keys, WASD, Numpad, or Gamepad (D-Pad/Left Stick)
-                </div>
-                <div class="instruction-group">
-                    <strong>🚀 Tips:</strong> Focus on rhythm and consistency. Start slow, build muscle memory, then increase speed!
-                </div>
-                <div class="instruction-group">
-                    <strong>🎮 Shortcuts:</strong> Space=Start/Stop • R=Reset • 1-4=Mode Select
+            <div id="instructions-content" class="instructions-content hidden">
+                <div class="instructions-grid">
+                    <div class="instruction-card">
+                        <!-- <div class="instruction-icon">⌨️</div> -->
+                        <div class="instruction-title">Controls</div>
+                        <div class="instruction-text">Arrow Keys, WASD, Numpad, or Gamepad D-Pad</div>
+                    </div>
+                    <div class="instruction-card">
+                        <!-- <div class="instruction-icon">⚡</div> -->
+                        <div class="instruction-title">Shortcuts</div>
+                        <div class="instruction-text">
+                            <kbd>Space</kbd> Start/Stop • <kbd>R</kbd> Reset • <kbd>1-4</kbd> Switch Mode
+                        </div>
+                    </div>
+                    <div class="instruction-card">
+                        <!-- <div class="instruction-icon">🎯</div> -->
+                        <div class="instruction-title">Objective</div>
+                        <div class="instruction-text">Master precise timing for Korean Back Dash & Wave Dash techniques</div>
+                    </div>
                 </div>
             </div>
         </footer>
     </div>
 
     <!-- Game Scripts -->
-    <script src="game-engine.js"></script>
-    <script src="input-handler.js"></script>
-    <script src="ui-controller.js"></script>
-    <script src="app.js"></script>
+    <script src="game-engine.js" defer></script>
+    <script src="input-handler.js" defer></script>
+    <script src="ui-controller.js" defer></script>
+    <script src="app.js" defer></script>
 </body>
 </html>
